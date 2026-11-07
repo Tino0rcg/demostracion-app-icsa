@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -10,10 +9,9 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { ArrowLeft, LogIn, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, LogIn, Eye, EyeOff, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { loginAction, checkSysHealth } from "@/actions/auth-actions";
-import { useEffect } from "react";
+import { loginAction, checkSysHealth, autoDemoLogin } from "@/actions/auth-actions";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -26,8 +24,34 @@ export default function LoginPage() {
 
   useEffect(() => {
     checkSysHealth().then(setHealth).catch(console.error);
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tour") === "true") {
+        setLoading(true);
+        autoDemoLogin("admin").then(() => {
+          window.location.href = "/dashboard?tour=true";
+        });
+      }
+    }
   }, []);
+
   const logoImage = PlaceHolderImages.find(img => img.id === "icsa-logo");
+
+  const handleQuickDemo = async (role: "admin" | "supervisor" | "prevencion") => {
+    setLoading(true);
+    try {
+      const response = await autoDemoLogin(role);
+      if ('user' in response && response.user) {
+        toast({ title: "Acceso Demo Concedido", description: `Ingresando como ${response.user.name}...` });
+        window.location.href = "/dashboard?tour=true";
+      } else {
+        window.location.href = "/dashboard?tour=true";
+      }
+    } catch {
+      window.location.href = "/dashboard?tour=true";
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,11 +60,12 @@ export default function LoginPage() {
     try {
       const response = await loginAction(email, password);
 
-      if (response.success && response.user) {
+      if ('user' in response && response.user) {
         toast({ title: "Bienvenido", description: `Acceso concedido as ${response.user.name}.` });
         window.location.href = "/dashboard";
       } else {
-        toast({ variant: "destructive", title: "Error de Acceso", description: response.error || "Credenciales inválidas." });
+        const errorMsg = 'error' in response ? response.error : "Credenciales inválidas.";
+        toast({ variant: "destructive", title: "Error de Acceso", description: errorMsg || "Credenciales inválidas." });
         setLoading(false);
       }
     } catch (error: any) {
@@ -81,6 +106,26 @@ export default function LoginPage() {
           </div>
         </CardHeader>
         <CardContent className="pb-8 pt-4">
+          {/* Banner Salto de Login / Demo Tour */}
+          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/15 to-primary/5 border border-primary/20 space-y-2 text-center">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-black uppercase text-primary tracking-wide">
+              <Sparkles size={16} className="text-yellow-600 animate-pulse" />
+              <span>Modo Demostración Activo</span>
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">
+              Puedes omitir el inicio de sesión para entrar directo al tour guiado por todas las vistas de la app.
+            </p>
+            <Button
+              type="button"
+              onClick={() => handleQuickDemo("admin")}
+              disabled={loading}
+              className="w-full bg-primary hover:bg-primary/90 text-white font-black text-sm h-11 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer gap-2"
+            >
+              <Sparkles size={16} />
+              <span>🚀 Iniciar Tour Guiado (Omitir Login)</span>
+            </Button>
+          </div>
+
           <form onSubmit={handleAuth} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-bold ml-1 uppercase opacity-60">Correo Electrónico</Label>
@@ -121,19 +166,17 @@ export default function LoginPage() {
             {/* Quick Demo Access Buttons */}
             <div className="pt-2 border-t border-muted/50 space-y-2">
               <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block text-center">
-                Acceso Rápido Modo Demostración:
+                Acceso Rápido con 1 Clic (Ingreso Inmediato):
               </span>
               <div className="grid grid-cols-3 gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setEmail("admin@icsa.cl");
-                    setPassword("admin123");
-                  }}
+                  onClick={() => handleQuickDemo("admin")}
+                  disabled={loading}
                   className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
-                  title="Entrar como Administrador"
+                  title="Entrar directamente como Administrador"
                 >
                   👑 Admin
                 </Button>
@@ -141,12 +184,10 @@ export default function LoginPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setEmail("supervisor@icsa.cl");
-                    setPassword("supervisor123");
-                  }}
+                  onClick={() => handleQuickDemo("supervisor")}
+                  disabled={loading}
                   className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
-                  title="Entrar como Supervisor de Terreno"
+                  title="Entrar directamente como Supervisor de Terreno"
                 >
                   👷 Supervisor
                 </Button>
@@ -154,12 +195,10 @@ export default function LoginPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setEmail("prevencion@icsa.cl");
-                    setPassword("prevencion123");
-                  }}
+                  onClick={() => handleQuickDemo("prevencion")}
+                  disabled={loading}
                   className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
-                  title="Entrar como Prevencionista de Riesgos"
+                  title="Entrar directamente como Prevencionista de Riesgos"
                 >
                   🦺 Seguridad
                 </Button>

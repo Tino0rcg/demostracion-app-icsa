@@ -21,7 +21,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useUser, useUserProfile } from "@/lib/auth-provider";
 import { useActionData } from "@/hooks/use-action-data";
 import { getActiveProjects, getWorkOrders, getArchivedWorkOrders, deleteRecord, hideWorkOrder, hideProject, getTools, saveTool, deleteTool, getToolMovements, approveToolReturn, returnMultipleTools, assignMultipleTools, getClients, getPersonnel } from "@/actions/db-actions";
-import { logoutAction } from "@/actions/auth-actions";
+import { logoutAction, autoDemoLogin } from "@/actions/auth-actions";
 import { cn, formatFolio } from "@/lib/utils";
 import {
   AlertDialog,
@@ -105,9 +105,11 @@ function DashboardContent() {
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push("/login");
+      autoDemoLogin("admin").then(() => {
+        window.location.reload();
+      });
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading]);
 
   const isAdmin = userProfile?.rol_t?.toLowerCase() === 'admin' || 
     userProfile?.rol_t?.toLowerCase() === 'administrador';
@@ -473,7 +475,7 @@ function DashboardContent() {
         </div>
 
         {activeTab === "dashboard" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 animate-fade-in">
+          <div id="tour-stats-grid" className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 animate-fade-in">
             <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
               <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
                 <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
@@ -525,7 +527,7 @@ function DashboardContent() {
         )}
 
         {(activeTab === "projects" || activeTab === "project-history") && (
-          <Card className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden animate-slide-up">
+          <Card id={activeTab === "projects" ? "tour-projects-container" : "tour-projects-history-container"} className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden animate-slide-up">
             <CardHeader className="border-b border-black/5 bg-transparent p-6">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="relative flex-1 max-w-md">
@@ -563,7 +565,7 @@ function DashboardContent() {
         )}
 
         {(activeTab === "orders" || activeTab === "order-history") && (
-          <Card className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden animate-slide-up">
+          <Card id={activeTab === "orders" ? "tour-orders-container" : "tour-history-container"} className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden animate-slide-up">
             <CardHeader className="border-b border-black/5 bg-transparent p-6">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="relative flex-1 max-w-md">
@@ -600,7 +602,7 @@ function DashboardContent() {
         )}
 
         {activeTab === "tools" && (
-          <div className="space-y-6 animate-in fade-in duration-500">
+          <div id="tour-tools-container" className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl shadow-primary/5">
               <div>
                 <h2 className="text-2xl font-black text-primary tracking-tighter uppercase italic">Inventario de Equipos</h2>
@@ -1603,6 +1605,8 @@ function DashboardContent() {
           </DialogContent>
         </Dialog>
       </main>
+
+      <GuidedTour onTabChange={setTab} />
     </div>
   );
 }
@@ -1900,8 +1904,6 @@ function OrderTable({ orders, isLoading, type, setDeleteConfirm, isAdmin }: { or
           })
         )}
       </div>
-
-      <GuidedTour />
     </div>
   );
 }

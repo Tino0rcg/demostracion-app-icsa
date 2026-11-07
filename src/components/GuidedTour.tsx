@@ -1,20 +1,29 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { driver } from "driver.js";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { driver, Driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import { Sparkles, HelpCircle } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function GuidedTour() {
-  const [hasSeenTour, setHasSeenTour] = useState(true);
+interface GuidedTourProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export function GuidedTour({ onTabChange }: GuidedTourProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+  const driverRef = useRef<Driver | null>(null);
 
   const startTour = useCallback(() => {
+    // Start at dashboard tab
+    onTabChange?.("dashboard");
+
     const driverObj = driver({
       showProgress: true,
       animate: true,
       allowClose: true,
-      overlayColor: "rgba(10, 25, 47, 0.8)",
+      waitForElement: 800,
+      overlayColor: "rgba(10, 25, 47, 0.85)",
       nextBtnText: "Siguiente →",
       prevBtnText: "← Anterior",
       doneBtnText: "¡Finalizar Tour!",
@@ -22,76 +31,123 @@ export function GuidedTour() {
         {
           element: "#tour-welcome",
           popover: {
-            title: "👋 Bienvenido al Portal ICSA",
-            description: "Este es el centro de control operativo de ICSA Ingeniería. Desde aquí se digitalizan las faenas en terreno, eliminando las carpetas de papel.",
+            title: "👋 1. Bienvenido a ICSA Ingeniería",
+            description: "Has ingresado directamente como **Administrador General** sin necesidad de digitar contraseñas. El software cuenta con autenticación multi-rol para técnicos, supervisores y prevención de riesgos.",
             side: "bottom",
             align: "start"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("dashboard");
+          }
+        },
+        {
+          element: "#tour-stats-grid",
+          popover: {
+            title: "📊 2. KPIs y Métricas Operativas en Vivo",
+            description: "Panel de control con visibilidad inmediata de proyectos en curso, visitas técnicas de la jornada y estado del inventario de herramientas.",
+            side: "top",
+            align: "start"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("dashboard");
+          }
+        },
+        {
+          element: "#tour-projects-container",
+          popover: {
+            title: "📁 3. Vista de Proyectos & Contratos Activos",
+            description: "Aquí se agrupan los contratos con clientes de telecomunicaciones e infraestructura. Permite supervisar el equipo técnico asignado y los plazos contractuales.",
+            side: "top",
+            align: "start"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("projects");
+          }
+        },
+        {
+          element: "#tour-orders-container",
+          popover: {
+            title: "⚡ 4. Órdenes de Trabajo en Terreno (OTs)",
+            description: "¡Adiós al lápiz y papel! Cada orden cuenta con folio oficial, registro de cables, evidencia fotográfica comprimida para redes 3G y toma de firmas presenciales o a distancia por correo.",
+            side: "top",
+            align: "start"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("orders");
           }
         },
         {
           element: "#tour-btn-new-ot",
           popover: {
-            title: "📋 Crear Nueva Orden de Trabajo (OT)",
-            description: "El técnico o supervisor presiona aquí para registrar una faena, detallar puntos de red, subir fotos comprimidas y pedir firmas en pantalla táctil.",
+            title: "📋 5. Emisión de Nuevas OTs en Faena",
+            description: "Los supervisores en terreno presionan aquí desde su teléfono o tablet para crear una nueva orden de trabajo técnica en segundos.",
             side: "bottom",
             align: "center"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("dashboard");
           }
         },
         {
-          element: "#tour-btn-new-project",
+          element: "#tour-tools-container",
           popover: {
-            title: "📁 Nuevo Proyecto & Asignación",
-            description: "Agrupa múltiples órdenes de trabajo bajo un solo contrato y asigna cuadrillas de supervisores y técnicos.",
-            side: "bottom",
-            align: "center"
-          }
-        },
-        {
-          element: "#tour-card-projects",
-          popover: {
-            title: "📊 Proyectos en Ejecución",
-            description: "Supervisa en tiempo real el avance de cada faena, porcentaje de completitud y estado de las cuadrillas.",
-            side: "top",
-            align: "start"
-          }
-        },
-        {
-          element: "#tour-card-orders",
-          popover: {
-            title: "⚡ Órdenes de Trabajo Activas & PDF",
-            description: "Revisa las órdenes firmadas en terreno o por enlace remoto seguro. Al completarse, se genera y envía automáticamente el informe PDF oficial.",
-            side: "top",
-            align: "start"
-          }
-        },
-        {
-          element: "#tour-card-tools",
-          popover: {
-            title: "🔧 Control de Herramientas de Alto Valor",
-            description: "Control de inventario sin pérdidas (fusionadoras, OTDRs, taladros). Requiere firma digital obligatoria en pantalla para retirar y devolver equipos.",
+            title: "🔧 6. Control de Herramientas de Alto Costo",
+            description: "Inventario de fusionadoras de fibra, OTDRs y taladros. Trazabilidad estricta: requiere firma digital obligatoria en pantalla para retirar y devolver equipos sin pérdidas.",
             side: "top",
             align: "center"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("tools");
           }
         },
         {
           element: "#tour-menu-hpt",
           popover: {
-            title: "🦺 Seguridad Laboral & Charlas (HPT)",
-            description: "Cumplimiento estricto de mutualidades: registro de charlas de 5 minutos antes de iniciar faenas de riesgo con firmas de asistencia.",
+            title: "🦺 7. Prevención de Riesgos (Cumplimiento de Ley)",
+            description: "Checklists obligatorios de EPP antes de iniciar faenas peligrosas y registro de charlas de seguridad de 5 minutos con firmas de asistencia para mutualidades.",
             side: "right",
             align: "center"
           }
+        },
+        {
+          element: "#tour-history-container",
+          popover: {
+            title: "📄 8. Historial & Actas de Cierre en PDF",
+            description: "Al finalizar una orden o proyecto, el sistema consolida automáticamente materiales, fotos comprimidas y firmas en un acta PDF formal lista para cobrar.",
+            side: "top",
+            align: "start"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("order-history");
+          }
+        },
+        {
+          element: "#tour-floating-btn",
+          popover: {
+            title: "🎉 ¡Recorrido Completo!",
+            description: "Has explorado todos los módulos operativos del software de ICSA. Ahora puedes interactuar libremente con la aplicación o reiniciar el recorrido cuando desees.",
+            side: "left",
+            align: "center"
+          },
+          onHighlightStarted: () => {
+            onTabChange?.("dashboard");
+          }
         }
-      ]
+      ],
+      onDestroyed: () => {
+        onTabChange?.("dashboard");
+      }
     });
 
+    driverRef.current = driverObj;
     driverObj.drive();
     localStorage.setItem("icsa_tour_completed", "true");
-    setHasSeenTour(true);
-  }, []);
+  }, [onTabChange]);
 
   useEffect(() => {
+    setHasMounted(true);
     if (typeof window === "undefined") return;
+
     const params = new URLSearchParams(window.location.search);
     const forceTour = params.get("tour") === "true";
     const completed = localStorage.getItem("icsa_tour_completed");
@@ -99,13 +155,15 @@ export function GuidedTour() {
     if (forceTour || !completed) {
       const timer = setTimeout(() => {
         startTour();
-      }, 900);
+      }, 700);
       return () => clearTimeout(timer);
     }
   }, [startTour]);
 
+  if (!hasMounted) return null;
+
   return (
-    <div className="fixed bottom-6 right-6 z-40 hidden md:block animate-fade-in">
+    <div id="tour-floating-btn" className="fixed bottom-6 right-6 z-40 hidden md:block animate-fade-in">
       <Button
         onClick={startTour}
         className="bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-black text-xs rounded-full px-5 py-6 shadow-2xl hover:scale-105 transition-all flex items-center gap-2 cursor-pointer border-2 border-white/20"

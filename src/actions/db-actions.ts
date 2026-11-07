@@ -85,6 +85,155 @@ Object.entries(KEY_MAPPING).forEach(([db, fe]) => {
     REVERSE_KEY_MAPPING[fe] = db;
 });
 
+// Realistic demo fallback datasets for live portfolio demonstrations
+export const DEMO_PROJECTS = [
+    {
+        id: "proj-demo-1",
+        name: "Instalación & Certificación Fibra Óptica - Planta Norte",
+        clientName: "ICSA Ingeniería & Minería",
+        teamNames: ["Carlos Muñoz (Supervisor)", "Ramiro Contreras"],
+        status: "active",
+        createdAt: "2026-03-01T08:00:00Z",
+        startDate: "2026-03-01",
+        endDate: "2026-04-15"
+    },
+    {
+        id: "proj-demo-2",
+        name: "Tendido Subterráneo y Fusión Nodos 4G/5G",
+        clientName: "Entel Infraestructura Chile",
+        teamNames: ["Ramiro Contreras (Admin)", "Juan Pablo Torres"],
+        status: "active",
+        createdAt: "2026-02-15T09:30:00Z",
+        startDate: "2026-02-15",
+        endDate: "2026-03-30"
+    },
+    {
+        id: "proj-demo-3",
+        name: "Cableado Estructurado & Racks Edificio Corporativo",
+        clientName: "Movistar Empresas SpA",
+        teamNames: ["Carlos Muñoz (Supervisor)"],
+        status: "active",
+        createdAt: "2026-01-10T10:00:00Z",
+        startDate: "2026-01-10",
+        endDate: "2026-02-28"
+    }
+];
+
+export const DEMO_ORDERS = [
+    {
+        id: "ot-demo-1",
+        folio: 1042,
+        clientName: "ICSA Ingeniería & Minería",
+        techName: "Carlos Muñoz (Supervisor)",
+        status: "En Proceso",
+        description: "Certificación OTDR y fusión de 24 hilos de fibra troncal subterránea.",
+        isProjectSummary: false,
+        createdAt: "2026-03-10",
+        updatedAt: "2026-03-10"
+    },
+    {
+        id: "ot-demo-2",
+        folio: 1043,
+        clientName: "Entel Infraestructura Chile",
+        techName: "Ramiro Contreras",
+        status: "Firmada en Terreno",
+        description: "Montaje de ODF de 48 puertos y rotulado normativo de patch cords.",
+        isProjectSummary: false,
+        createdAt: "2026-03-11",
+        updatedAt: "2026-03-11"
+    },
+    {
+        id: "ot-demo-3",
+        folio: 1044,
+        clientName: "Movistar Empresas SpA",
+        techName: "Juan Pablo Torres",
+        status: "Pendiente",
+        description: "Habilitación de enlaces troncales y verificación de potencia óptica (-18 dBm).",
+        isProjectSummary: false,
+        createdAt: "2026-03-12",
+        updatedAt: "2026-03-12"
+    }
+];
+
+export const DEMO_HISTORY_ORDERS = [
+    {
+        id: "ot-demo-hist-1",
+        folio: 1039,
+        clientName: "VTR Redes Troncales",
+        techName: "Carlos Muñoz",
+        status: "Completado",
+        description: "Acta Final Consolidada: Empalme y certificación enlace metropolitano 10Gbps.",
+        isProjectSummary: true,
+        createdAt: "2026-02-20",
+        updatedAt: "2026-02-25"
+    },
+    {
+        id: "ot-demo-hist-2",
+        folio: 1040,
+        clientName: "Metro de Santiago (Línea 6)",
+        techName: "Ramiro Contreras",
+        status: "Completado",
+        description: "Inspección técnica de ductos subterráneos y pruebas reflectométricas.",
+        isProjectSummary: false,
+        createdAt: "2026-02-26",
+        updatedAt: "2026-02-28"
+    }
+];
+
+export const DEMO_TOOLS = [
+    {
+        id: "tool-demo-1",
+        nombre: "Fusionadora de Fibra Óptica Fujikura 90S+",
+        codigoInterno: "FUS-001",
+        categoria: "Instrumental Óptico",
+        estado: "En Terreno",
+        asignadoA: "Carlos Muñoz",
+        imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-2",
+        nombre: "Certificador OTDR Fluke OptiFiber Pro",
+        codigoInterno: "OTDR-002",
+        categoria: "Certificación",
+        estado: "Disponible",
+        asignadoA: null,
+        imageUrl: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-3",
+        nombre: "Medidor de Potencia Óptica y Fuente Láser",
+        codigoInterno: "OPM-003",
+        categoria: "Medición",
+        estado: "Disponible",
+        asignadoA: null,
+        imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-4",
+        nombre: "Cortadora de Precisión CT50 Fujikura",
+        codigoInterno: "CLEAV-004",
+        categoria: "Herramienta Manual",
+        estado: "En Terreno",
+        asignadoA: "Ramiro Contreras",
+        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-5",
+        nombre: "Taladro Percutor Inalámbrico DeWalt 20V Max",
+        codigoInterno: "TAL-005",
+        categoria: "Herramienta Eléctrica",
+        estado: "Disponible",
+        asignadoA: null,
+        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
+    }
+];
+
+export const DEMO_CLIENTS = [
+    { id: "cli-1", nombreCliente: "ICSA Ingeniería & Minería", rutCliente: "76.543.210-K", emailClientes: "contacto@icsa.cl", direccionCliente: "Av. Providencia 1208, Santiago" },
+    { id: "cli-2", nombreCliente: "Entel Infraestructura Chile", rutCliente: "96.806.000-4", emailClientes: "redes@entel.cl", direccionCliente: "Av. Costanera Sur 2760, Las Condes" },
+    { id: "cli-3", nombreCliente: "Movistar Empresas SpA", rutCliente: "76.123.456-7", emailClientes: "b2b@movistar.cl", direccionCliente: "Plaza Baquedano 44, Providencia" }
+];
+
 /**
  * Standardizes a payload for Supabase by mapping frontend camelCase keys
  * back to their respective database column names.
@@ -127,6 +276,12 @@ function fromDbPayload(data: any | any[]): any {
     return result;
 }
 
+export const DEMO_PERSONNEL = [
+    { id: "usr-admin-demo", nombre_t: "Ramiro Contreras", rol_t: "Administrador", email: "admin@icsa.cl", rut_t: "11.111.111-1" },
+    { id: "usr-sup-demo", nombre_t: "Carlos Muñoz", rol_t: "Supervisor", email: "supervisor@icsa.cl", rut_t: "22.222.222-2" },
+    { id: "usr-tech-demo", nombre_t: "Juan Pablo Torres", rol_t: "Técnico", email: "jtorres@icsa.cl", rut_t: "33.333.333-3" }
+];
+
 export async function getClients() {
     try {
         noStore();
@@ -135,11 +290,11 @@ export async function getClients() {
             .select('*')
             .order('nombrecliente', { ascending: true }); // Lowercase in DB
         
-        if (error) throw error;
-        return fromDbPayload(data) || [];
+        if (error || !data || data.length === 0) return DEMO_CLIENTS;
+        return fromDbPayload(data) || DEMO_CLIENTS;
     } catch (e: any) {
-        console.error("Error en getClients:", e);
-        return [];
+        console.error("Error en getClients (usando fallback demo):", e);
+        return DEMO_CLIENTS;
     }
 }
 
@@ -150,11 +305,11 @@ export async function getPersonnel() {
             .select('*')
             .order('nombre_t', { ascending: true });
         
-        if (error) throw error;
-        return fromDbPayload(data) || [];
+        if (error || !data || data.length === 0) return DEMO_PERSONNEL;
+        return fromDbPayload(data) || DEMO_PERSONNEL;
     } catch (e: any) {
-        console.error("Error en getPersonnel:", e);
-        return [];
+        console.error("Error en getPersonnel (usando fallback demo):", e);
+        return DEMO_PERSONNEL;
     }
 }
 
@@ -219,9 +374,8 @@ export async function getActiveProjects(userId?: string, isAdmin?: boolean, incl
         error = fallback.error;
     }
 
-    if (error) {
-        console.error("[GET_ACTIVE_PROJECTS_ERROR]", error);
-        throw error;
+    if (error || !data || data.length === 0) {
+        return DEMO_PROJECTS;
     }
 
     console.log(`[DIAGNOSTIC] getActiveProjects: isAdmin=${isAdmin}, userId=${userId}, found=${data?.length || 0}`);
@@ -274,7 +428,8 @@ export async function getActiveProjects(userId?: string, isAdmin?: boolean, incl
         }
     }
 
-    return fromDbPayload(projects);
+    const result = fromDbPayload(projects);
+    return (result && result.length > 0) ? result : DEMO_PROJECTS;
 }
 
 export async function saveWorkOrderAndStatus(data: any, isArchived: boolean = false) {
@@ -423,9 +578,8 @@ export async function getWorkOrders(userId?: string, isAdmin?: boolean) {
         error = fallback.error;
     }
 
-    if (error) {
-        console.error("[GET_WORK_ORDERS_ERROR]", error);
-        throw error;
+    if (error || !data || data.length === 0) {
+        return DEMO_ORDERS;
     }
 
     let orders = fromDbPayload(data || []);
@@ -449,7 +603,7 @@ export async function getWorkOrders(userId?: string, isAdmin?: boolean) {
         });
     }
 
-    return orders;
+    return (orders && orders.length > 0) ? orders : DEMO_ORDERS;
 }
 
 export async function getArchivedWorkOrders(userId?: string, isAdmin?: boolean) {
@@ -489,9 +643,8 @@ export async function getArchivedWorkOrders(userId?: string, isAdmin?: boolean) 
         error = fallback.error;
     }
 
-    if (error) {
-        console.error("[GET_ARCHIVED_WORK_ORDERS_ERROR]", error);
-        throw error;
+    if (error || !data || data.length === 0) {
+        return DEMO_HISTORY_ORDERS;
     }
 
     let orders = fromDbPayload(data || []);
@@ -512,7 +665,7 @@ export async function getArchivedWorkOrders(userId?: string, isAdmin?: boolean) 
         });
     }
 
-    return orders;
+    return (orders && orders.length > 0) ? orders : DEMO_HISTORY_ORDERS;
 }
 
 // Additional helpers needed...
@@ -1224,13 +1377,17 @@ export async function runDataMigration() {
 }
 
 export async function getTools() {
-    noStore();
-    const { data, error } = await supabase
-        .from('herramientas')
-        .select('*')
-        .order('nombre', { ascending: true });
-    if (error) throw error;
-    return fromDbPayload(data || []);
+    try {
+        noStore();
+        const { data, error } = await supabase
+            .from('herramientas')
+            .select('*')
+            .order('nombre', { ascending: true });
+        if (error || !data || data.length === 0) return DEMO_TOOLS;
+        return fromDbPayload(data || DEMO_TOOLS);
+    } catch {
+        return DEMO_TOOLS;
+    }
 }
 
 export async function getToolMovements(period: 'daily' | 'weekly' | 'monthly' | 'all' = 'all') {

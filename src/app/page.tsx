@@ -29,10 +29,15 @@ export default function Home() {
               <span className="text-[7px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-70">ingeniería comunicaciones S.A.</span>
             </div>
           </div>
-          <nav>
+          <nav className="flex items-center gap-3">
             <Link href="/login">
-              <Button variant="default" className="bg-primary hover:bg-primary/90 font-black px-6 h-11 text-base shadow-lg transition-all hover:scale-105 rounded-xl">
+              <Button variant="ghost" className="font-bold text-muted-foreground hover:text-primary">
                 Iniciar Sesión
+              </Button>
+            </Link>
+            <Link href="/login?tour=true">
+              <Button variant="default" className="bg-primary hover:bg-primary/90 font-black px-6 h-11 text-base shadow-lg transition-all hover:scale-105 rounded-xl gap-2">
+                🚀 Iniciar Tour
               </Button>
             </Link>
           </nav>
@@ -52,7 +57,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
           </div>
           <div className="container mx-auto px-4 relative z-10 text-center">
-            <div className="max-w-4xl mx-auto space-y-12">
+            <div className="max-w-4xl mx-auto space-y-10">
               <h1 className="text-6xl md:text-7xl font-black tracking-tighter text-primary leading-[0.85]">
                 Ordenes de Trabajo <br />
                 <span className="text-accent">Digital</span>
@@ -60,6 +65,18 @@ export default function Home() {
               <p className="text-base md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed px-4">
                 Plataforma de gestión operativa para ICSA. Digitaliza tus formularios, captura firmas y optimiza el flujo técnico.
               </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <Link href="/login?tour=true">
+                  <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-14 text-base shadow-xl shadow-primary/25 rounded-2xl transition-all hover:scale-105 cursor-pointer gap-2">
+                    🚀 Iniciar Tour Guiado (Demo en Vivo)
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline" className="border-primary/20 hover:bg-primary/5 text-primary font-bold px-6 h-14 text-base rounded-2xl cursor-pointer">
+                    Acceso con Roles
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
