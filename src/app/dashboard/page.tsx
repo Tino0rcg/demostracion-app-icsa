@@ -58,10 +58,9 @@ function DashboardContent() {
     const tab = searchParams.get("tab");
     if (tab) {
       setActiveTab(tab);
-    } else {
-      setActiveTab("dashboard");
     }
-  }, [searchParams]);
+  }, []);
+
 
   const setTab = useCallback((tab: string) => {
     setActiveTab(tab);

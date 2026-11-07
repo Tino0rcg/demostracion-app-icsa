@@ -13,6 +13,29 @@ interface GuidedTourProps {
 // Module-level guard to ensure the tour auto-launches strictly once per browser session
 let tourHasAutoLaunched = false;
 
+function waitForDOMElement(selector: string, timeout = 2500): Promise<Element | null> {
+  return new Promise((resolve) => {
+    if (typeof document === "undefined") return resolve(null);
+    const el = document.querySelector(selector);
+    if (el) return resolve(el);
+
+    const observer = new MutationObserver(() => {
+      const target = document.querySelector(selector);
+      if (target) {
+        observer.disconnect();
+        resolve(target);
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    setTimeout(() => {
+      observer.disconnect();
+      resolve(document.querySelector(selector));
+    }, timeout);
+  });
+}
+
 export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const driverRef = useRef<Driver | null>(null);
@@ -48,8 +71,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
       showProgress: true,
       animate: true,
       allowClose: true,
-      skipMissingElement: true,
-      waitForElement: 1500,
+      waitForElement: 2000,
       overlayColor: "rgba(10, 25, 47, 0.85)",
       nextBtnText: "Siguiente →",
       prevBtnText: "← Anterior",
@@ -64,7 +86,9 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start",
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              opts.driver.moveNext();
+              waitForDOMElement("#tour-stats-grid").then(() => {
+                opts.driver.moveNext();
+              });
             }
           }
         },
@@ -77,13 +101,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              opts.driver.movePrevious();
+              waitForDOMElement("#tour-welcome").then(() => {
+                opts.driver.movePrevious();
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("projects");
-              setTimeout(() => {
+              waitForDOMElement("#tour-projects-container").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -96,15 +122,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-stats-grid").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("orders");
-              setTimeout(() => {
+              waitForDOMElement("#tour-orders-container").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -117,15 +143,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("projects");
-              setTimeout(() => {
+              waitForDOMElement("#tour-projects-container").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-btn-new-ot").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -138,15 +164,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("orders");
-              setTimeout(() => {
+              waitForDOMElement("#tour-orders-container").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("tools");
-              setTimeout(() => {
+              waitForDOMElement("#tour-tools-container").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -159,15 +185,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-btn-new-ot").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-menu-hpt, #tour-welcome").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -180,15 +206,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("tools");
-              setTimeout(() => {
+              waitForDOMElement("#tour-tools-container").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("order-history");
-              setTimeout(() => {
+              waitForDOMElement("#tour-history-container").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -201,15 +227,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-menu-hpt, #tour-welcome").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             },
             onNextClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
-              setTimeout(() => {
+              waitForDOMElement("#tour-floating-btn").then(() => {
                 opts.driver.moveNext();
-              }, 250);
+              });
             }
           }
         },
@@ -222,9 +248,9 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center",
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("order-history");
-              setTimeout(() => {
+              waitForDOMElement("#tour-history-container").then(() => {
                 opts.driver.movePrevious();
-              }, 250);
+              });
             }
           }
         }
