@@ -14,9 +14,19 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const driverRef = useRef<Driver | null>(null);
 
-  const startTour = useCallback(() => {
-    // Start at dashboard tab
-    onTabChange?.("dashboard");
+  const startTour = useCallback((startIndex = 0) => {
+    // If starting at index 0 or 1, make sure dashboard tab is selected
+    if (startIndex === 0 || startIndex === 1 || startIndex === 4 || startIndex === 8) {
+      onTabChange?.("dashboard");
+    } else if (startIndex === 2) {
+      onTabChange?.("projects");
+    } else if (startIndex === 3) {
+      onTabChange?.("orders");
+    } else if (startIndex === 5) {
+      onTabChange?.("tools");
+    } else if (startIndex === 7) {
+      onTabChange?.("order-history");
+    }
 
     const driverObj = driver({
       showProgress: true,
@@ -31,8 +41,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-welcome",
           popover: {
-            title: "👋 1. Bienvenido a ICSA Ingeniería",
-            description: "Has ingresado directamente como **Administrador General** sin necesidad de digitar contraseñas. El software cuenta con autenticación multi-rol para técnicos, supervisores y prevención de riesgos.",
+            title: "🔐 Paso 1: Autenticación & Control de Roles (Omitido)",
+            description: "Has ingresado automáticamente como <strong>Administrador General</strong> sin digitar credenciales. El software cuenta con segregación estricta de funciones para Supervisores de Faena, Prevención de Riesgos y Gerencia.",
             side: "bottom",
             align: "start"
           },
@@ -43,8 +53,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-stats-grid",
           popover: {
-            title: "📊 2. KPIs y Métricas Operativas en Vivo",
-            description: "Panel de control con visibilidad inmediata de proyectos en curso, visitas técnicas de la jornada y estado del inventario de herramientas.",
+            title: "📊 Paso 2: KPIs y Métricas Operativas en Vivo",
+            description: "Panel central de control con visibilidad inmediata del estado de proyectos en faena, visitas técnicas de la jornada y disponibilidad de herramientas en pañol.",
             side: "top",
             align: "start"
           },
@@ -55,8 +65,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-projects-container",
           popover: {
-            title: "📁 3. Vista de Proyectos & Contratos Activos",
-            description: "Aquí se agrupan los contratos con clientes de telecomunicaciones e infraestructura. Permite supervisar el equipo técnico asignado y los plazos contractuales.",
+            title: "📁 Paso 3: Vista de Proyectos & Contratos Activos",
+            description: "Gestión centralizada de contratos de infraestructura y telecomunicaciones. Permite supervisar cuadrillas asignadas, avances de obra y plazos contractuales.",
             side: "top",
             align: "start"
           },
@@ -67,8 +77,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-orders-container",
           popover: {
-            title: "⚡ 4. Órdenes de Trabajo en Terreno (OTs)",
-            description: "¡Adiós al lápiz y papel! Cada orden cuenta con folio oficial, registro de cables, evidencia fotográfica comprimida para redes 3G y toma de firmas presenciales o a distancia por correo.",
+            title: "⚡ Paso 4: Órdenes de Trabajo en Terreno (OTs)",
+            description: "Digitalización total de faena: folios técnicos, registro de materiales y cables, compresión de fotos para redes 3G/4G y captura de firmas en terreno o a distancia.",
             side: "top",
             align: "start"
           },
@@ -79,8 +89,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-btn-new-ot",
           popover: {
-            title: "📋 5. Emisión de Nuevas OTs en Faena",
-            description: "Los supervisores en terreno presionan aquí desde su teléfono o tablet para crear una nueva orden de trabajo técnica en segundos.",
+            title: "📋 Paso 5: Emisión de Nuevas OTs en Faena",
+            description: "Los supervisores en terreno pueden crear y despachar una nueva orden técnica en segundos desde cualquier smartphone o tablet.",
             side: "bottom",
             align: "center"
           },
@@ -91,8 +101,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-tools-container",
           popover: {
-            title: "🔧 6. Control de Herramientas de Alto Costo",
-            description: "Inventario de fusionadoras de fibra, OTDRs y taladros. Trazabilidad estricta: requiere firma digital obligatoria en pantalla para retirar y devolver equipos sin pérdidas.",
+            title: "🔧 Paso 6: Control de Herramientas de Alto Costo",
+            description: "Inventario de fusionadoras de fibra, OTDRs y taladros. Trazabilidad estricta: requiere firma digital en pantalla para retirar y devolver equipos sin pérdidas de inventario.",
             side: "top",
             align: "center"
           },
@@ -103,8 +113,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-menu-hpt",
           popover: {
-            title: "🦺 7. Prevención de Riesgos (Cumplimiento de Ley)",
-            description: "Checklists obligatorios de EPP antes de iniciar faenas peligrosas y registro de charlas de seguridad de 5 minutos con firmas de asistencia para mutualidades.",
+            title: "🦺 Paso 7: Prevención de Riesgos & Charlas HPT",
+            description: "Cumplimiento normativo de mutualidades: checklists obligatorios de EPP antes de iniciar faenas peligrosas y registro de charlas operativas de 5 minutos con firmas de asistencia.",
             side: "right",
             align: "center"
           }
@@ -112,8 +122,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-history-container",
           popover: {
-            title: "📄 8. Historial & Actas de Cierre en PDF",
-            description: "Al finalizar una orden o proyecto, el sistema consolida automáticamente materiales, fotos comprimidas y firmas en un acta PDF formal lista para cobrar.",
+            title: "📄 Paso 8: Historial & Actas de Cierre en PDF",
+            description: "Al concluir faenas, el motor consolida automáticamente materiales, fotos comprimidas y firmas en un acta técnica oficial en PDF lista para cobrar o auditar.",
             side: "top",
             align: "start"
           },
@@ -124,8 +134,8 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-floating-btn",
           popover: {
-            title: "🎉 ¡Recorrido Completo!",
-            description: "Has explorado todos los módulos operativos del software de ICSA. Ahora puedes interactuar libremente con la aplicación o reiniciar el recorrido cuando desees.",
+            title: "🎉 Paso 9: ¡Recorrido Completo!",
+            description: "Has explorado todos los módulos del software de ICSA. Ahora puedes interactuar libremente con la aplicación o reiniciar el recorrido cuando desees.",
             side: "left",
             align: "center"
           },
@@ -140,7 +150,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
     });
 
     driverRef.current = driverObj;
-    driverObj.drive();
+    driverObj.drive(startIndex);
     localStorage.setItem("icsa_tour_completed", "true");
   }, [onTabChange]);
 
@@ -150,11 +160,13 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
 
     const params = new URLSearchParams(window.location.search);
     const forceTour = params.get("tour") === "true";
+    const stepParam = params.get("step");
+    const initialIndex = stepParam ? Math.max(0, parseInt(stepParam, 10) - 1) : 0;
     const completed = localStorage.getItem("icsa_tour_completed");
 
     if (forceTour || !completed) {
       const timer = setTimeout(() => {
-        startTour();
+        startTour(initialIndex);
       }, 700);
       return () => clearTimeout(timer);
     }
@@ -165,7 +177,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
   return (
     <div id="tour-floating-btn" className="fixed bottom-6 right-6 z-40 hidden md:block animate-fade-in">
       <Button
-        onClick={startTour}
+        onClick={() => startTour(0)}
         className="bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-black text-xs rounded-full px-5 py-6 shadow-2xl hover:scale-105 transition-all flex items-center gap-2 cursor-pointer border-2 border-white/20"
         title="Iniciar Recorrido Guiado Paso a Paso"
       >

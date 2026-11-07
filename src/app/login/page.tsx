@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -12,6 +12,8 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowLeft, LogIn, Eye, EyeOff, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { loginAction, checkSysHealth, autoDemoLogin } from "@/actions/auth-actions";
+import { driver, Driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,6 +23,51 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [health, setHealth] = useState<any>(null);
+  const driverRef = useRef<Driver | null>(null);
+
+  const startLoginTour = () => {
+    if (typeof window === "undefined") return;
+
+    const driverObj = driver({
+      showProgress: false,
+      animate: true,
+      allowClose: true,
+      overlayColor: "rgba(10, 25, 47, 0.85)",
+      nextBtnText: "🚀 Saltar Login e Ir al Dashboard →",
+      doneBtnText: "🚀 Saltar Login e Ir al Dashboard →",
+      showButtons: ["next", "close"],
+      steps: [
+        {
+          element: "#tour-login-card",
+          popover: {
+            title: "🔐 Paso 1: Autenticación & Control de Roles",
+            description: `
+              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+                <p>El sistema cuenta con segregación estricta de funciones para <strong>Administradores</strong>, <strong>Supervisores de Faena</strong> y <strong>Prevención de Riesgos</strong>.</p>
+                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 8px 10px; color: #115e59; font-weight: 500;">
+                  💡 <strong>Demostración Activa:</strong> Para que conozcas toda la plataforma sin fricción, <strong>nos saltamos el ingreso manual de credenciales</strong> y accederemos automáticamente como <strong>Administrador General</strong> para mostrarte todas las vistas operativas.
+                </div>
+              </div>
+            `,
+            side: "top",
+            align: "center",
+            nextBtnText: "🚀 Saltar Login e Ir al Dashboard →",
+          }
+        }
+      ],
+      onNextClick: () => {
+        driverObj.destroy();
+        handleQuickDemo("admin");
+      },
+      onDoneClick: () => {
+        driverObj.destroy();
+        handleQuickDemo("admin");
+      }
+    });
+
+    driverRef.current = driverObj;
+    driverObj.drive();
+  };
 
   useEffect(() => {
     checkSysHealth().then(setHealth).catch(console.error);
@@ -28,10 +75,10 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("tour") === "true") {
-        setLoading(true);
-        autoDemoLogin("admin").then(() => {
-          window.location.href = "/dashboard?tour=true";
-        });
+        const timer = setTimeout(() => {
+          startLoginTour();
+        }, 400);
+        return () => clearTimeout(timer);
       }
     }
   }, []);
@@ -40,16 +87,16 @@ export default function LoginPage() {
 
   const handleQuickDemo = async (role: "admin" | "supervisor" | "prevencion") => {
     setLoading(true);
+    toast({
+      title: "🚀 Modo Demostración Activo",
+      description: `Saltando formulario e ingresando como ${role.toUpperCase()}... Abriendo vistas del tour...`
+    });
+
     try {
-      const response = await autoDemoLogin(role);
-      if ('user' in response && response.user) {
-        toast({ title: "Acceso Demo Concedido", description: `Ingresando como ${response.user.name}...` });
-        window.location.href = "/dashboard?tour=true";
-      } else {
-        window.location.href = "/dashboard?tour=true";
-      }
+      await autoDemoLogin(role);
+      window.location.href = "/dashboard?tour=true&step=2";
     } catch {
-      window.location.href = "/dashboard?tour=true";
+      window.location.href = "/dashboard?tour=true&step=2";
     }
   };
 
@@ -81,7 +128,7 @@ export default function LoginPage() {
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-[100px]" />
 
-      <Card className="w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-none bg-white/95 backdrop-blur-xl relative z-10 p-4">
+      <Card id="tour-login-card" className="w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-none bg-white/95 backdrop-blur-xl relative z-10 p-4">
         <div className="absolute top-6 left-6">
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-primary transition-colors">
@@ -107,23 +154,35 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="pb-8 pt-4">
           {/* Banner Salto de Login / Demo Tour */}
-          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/15 to-primary/5 border border-primary/20 space-y-2 text-center">
+          <div id="tour-demo-banner" className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/15 to-primary/5 border border-primary/20 space-y-2 text-center">
             <div className="flex items-center justify-center gap-1.5 text-xs font-black uppercase text-primary tracking-wide">
               <Sparkles size={16} className="text-yellow-600 animate-pulse" />
               <span>Modo Demostración Activo</span>
             </div>
             <p className="text-xs text-muted-foreground font-medium">
-              Puedes omitir el inicio de sesión para entrar directo al tour guiado por todas las vistas de la app.
+              Conoce el sistema sin fricción: explicamos el acceso por roles y nos saltamos el formulario para ingresar de inmediato.
             </p>
-            <Button
-              type="button"
-              onClick={() => handleQuickDemo("admin")}
-              disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-black text-sm h-11 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer gap-2"
-            >
-              <Sparkles size={16} />
-              <span>🚀 Iniciar Tour Guiado (Omitir Login)</span>
-            </Button>
+            <div className="flex flex-col gap-2 pt-1">
+              <Button
+                id="tour-btn-skip-login"
+                type="button"
+                onClick={() => handleQuickDemo("admin")}
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-black text-sm h-11 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer gap-2"
+              >
+                <Sparkles size={16} />
+                <span>🚀 Saltar Login e Iniciar Tour Completo</span>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={startLoginTour}
+                className="text-xs font-bold text-primary hover:bg-primary/10 cursor-pointer"
+              >
+                ℹ️ Ver explicación del control de roles
+              </Button>
+            </div>
           </div>
 
           <form onSubmit={handleAuth} className="space-y-5">
@@ -164,7 +223,7 @@ export default function LoginPage() {
             </div>
 
             {/* Quick Demo Access Buttons */}
-            <div className="pt-2 border-t border-muted/50 space-y-2">
+            <div id="tour-demo-roles" className="pt-2 border-t border-muted/50 space-y-2">
               <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block text-center">
                 Acceso Rápido con 1 Clic (Ingreso Inmediato):
               </span>
