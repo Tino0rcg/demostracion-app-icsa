@@ -13,26 +13,41 @@ interface GuidedTourProps {
 export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const driverRef = useRef<Driver | null>(null);
+  const hasStartedRef = useRef(false);
+  const onTabChangeRef = useRef(onTabChange);
+
+  // Keep callback reference updated without triggering re-renders
+  useEffect(() => {
+    onTabChangeRef.current = onTabChange;
+  }, [onTabChange]);
 
   const startTour = useCallback((startIndex = 0) => {
-    // If starting at index 0 or 1, make sure dashboard tab is selected
+    // Clean up any existing tour instance safely
+    if (driverRef.current) {
+      try {
+        driverRef.current.destroy();
+      } catch {}
+    }
+
+    // Pre-select initial tab if needed
     if (startIndex === 0 || startIndex === 1 || startIndex === 4 || startIndex === 8) {
-      onTabChange?.("dashboard");
+      onTabChangeRef.current?.("dashboard");
     } else if (startIndex === 2) {
-      onTabChange?.("projects");
+      onTabChangeRef.current?.("projects");
     } else if (startIndex === 3) {
-      onTabChange?.("orders");
+      onTabChangeRef.current?.("orders");
     } else if (startIndex === 5) {
-      onTabChange?.("tools");
+      onTabChangeRef.current?.("tools");
     } else if (startIndex === 7) {
-      onTabChange?.("order-history");
+      onTabChangeRef.current?.("order-history");
     }
 
     const driverObj = driver({
       showProgress: true,
       animate: true,
       allowClose: true,
-      waitForElement: 800,
+      skipMissingElement: true,
+      waitForElement: 1000,
       overlayColor: "rgba(10, 25, 47, 0.85)",
       nextBtnText: "Siguiente →",
       prevBtnText: "← Anterior",
@@ -47,7 +62,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start"
           },
           onHighlightStarted: () => {
-            onTabChange?.("dashboard");
+            onTabChangeRef.current?.("dashboard");
           }
         },
         {
@@ -59,7 +74,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start"
           },
           onHighlightStarted: () => {
-            onTabChange?.("dashboard");
+            onTabChangeRef.current?.("dashboard");
           }
         },
         {
@@ -71,7 +86,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start"
           },
           onHighlightStarted: () => {
-            onTabChange?.("projects");
+            onTabChangeRef.current?.("projects");
           }
         },
         {
@@ -83,7 +98,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start"
           },
           onHighlightStarted: () => {
-            onTabChange?.("orders");
+            onTabChangeRef.current?.("orders");
           }
         },
         {
@@ -95,7 +110,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center"
           },
           onHighlightStarted: () => {
-            onTabChange?.("dashboard");
+            onTabChangeRef.current?.("dashboard");
           }
         },
         {
@@ -107,7 +122,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center"
           },
           onHighlightStarted: () => {
-            onTabChange?.("tools");
+            onTabChangeRef.current?.("tools");
           }
         },
         {
@@ -128,7 +143,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "start"
           },
           onHighlightStarted: () => {
-            onTabChange?.("order-history");
+            onTabChangeRef.current?.("order-history");
           }
         },
         {
@@ -140,23 +155,30 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             align: "center"
           },
           onHighlightStarted: () => {
-            onTabChange?.("dashboard");
+            onTabChangeRef.current?.("dashboard");
           }
         }
       ],
       onDestroyed: () => {
-        onTabChange?.("dashboard");
+        onTabChangeRef.current?.("dashboard");
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("tour");
+          url.searchParams.delete("step");
+          window.history.replaceState(null, "", url.toString());
+        }
       }
     });
 
     driverRef.current = driverObj;
     driverObj.drive(startIndex);
     localStorage.setItem("icsa_tour_completed", "true");
-  }, [onTabChange]);
+  }, []);
 
   useEffect(() => {
     setHasMounted(true);
     if (typeof window === "undefined") return;
+    if (hasStartedRef.current) return;
 
     const params = new URLSearchParams(window.location.search);
     const forceTour = params.get("tour") === "true";
@@ -165,6 +187,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
     const completed = localStorage.getItem("icsa_tour_completed");
 
     if (forceTour || !completed) {
+      hasStartedRef.current = true;
       const timer = setTimeout(() => {
         startTour(initialIndex);
       }, 700);

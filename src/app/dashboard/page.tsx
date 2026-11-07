@@ -63,12 +63,15 @@ function DashboardContent() {
     }
   }, [searchParams]);
 
-  const setTab = (tab: string) => {
+  const setTab = useCallback((tab: string) => {
     setActiveTab(tab);
-    const params = new URLSearchParams(window.location.search);
-    params.set("tab", tab);
-    router.push(`${window.location.pathname}?${params.toString()}`, { scroll: false });
-  };
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tab);
+      window.history.replaceState(null, "", url.toString());
+    }
+  }, []);
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFrom, setDateFrom] = useState("");
