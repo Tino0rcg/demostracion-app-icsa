@@ -253,7 +253,6 @@ ALTER TABLE public.hpt_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.capacitaciones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.capacitacion_asistentes ENABLE ROW LEVEL SECURITY;
 
--- Limpieza y creación de políticas RLS permisivas para la demo
 DROP POLICY IF EXISTS "Public All Users" ON public.users;
 CREATE POLICY "Public All Users" ON public.users FOR ALL USING (true) WITH CHECK (true);
 
@@ -291,24 +290,24 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO anon, authenticated, serv
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
 
 -- ==============================================================================
--- 4. CARGA DE DATOS SEMILLA (INSERTS INDEPENDIENTES)
+-- 4. CARGA DE DATOS SEMILLA (CON UUIDS HEXADECIMALES VÁLIDOS)
 -- ==============================================================================
 
--- A. USUARIOS
+-- A. USUARIOS (Prefijo: a000...)
 INSERT INTO public.users (id, email, password, name, role, rut) VALUES
 ('a0000000-0000-0000-0000-000000000001', 'admin@icsa.cl', 'admin123', 'Ramiro Contreras', 'Administrador', '16.890.123-4'),
 ('a0000000-0000-0000-0000-000000000002', 'supervisor@icsa.cl', 'supervisor123', 'Carlos Muñoz', 'Supervisor', '15.432.876-1'),
 ('a0000000-0000-0000-0000-000000000003', 'prevencion@icsa.cl', 'prevencion123', 'Patricia Fuentes', 'Prevención', '14.567.890-2')
 ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, role = EXCLUDED.role;
 
--- B. PERSONAL TÉCNICO
+-- B. PERSONAL TÉCNICO (Prefijo: a000...)
 INSERT INTO public.personnel (id, nombre_t, rut_t, email, rol_t, telefono_t, cargo_t, vehiculo_t, patente_t, estado_t) VALUES
 ('a0000000-0000-0000-0000-000000000001', 'Ramiro Contreras', '16.890.123-4', 'admin@icsa.cl', 'Administrador', '+56 9 8765 4321', 'Jefe de Operaciones', 'Camioneta Toyota Hilux', 'KJ-78-90', 'Activo'),
 ('a0000000-0000-0000-0000-000000000002', 'Carlos Muñoz', '15.432.876-1', 'supervisor@icsa.cl', 'Supervisor', '+56 9 7654 3210', 'Supervisor de Faenas', 'Camioneta Mitsubishi L200', 'LP-45-12', 'Activo'),
 ('a0000000-0000-0000-0000-000000000003', 'Patricia Fuentes', '14.567.890-2', 'prevencion@icsa.cl', 'Prevención', '+56 9 6543 2109', 'Encargada de Prevención de Riesgos', 'Vehículo Corporativo', 'RT-22-33', 'Activo')
 ON CONFLICT (id) DO NOTHING;
 
--- C. CLIENTES CORPORATIVOS
+-- C. CLIENTES CORPORATIVOS (Prefijo: c000...)
 INSERT INTO public.clients (id, nombrecliente, rutcliente, telefonocliente, emailclientes, direccioncliente, comunacliente, razonsocial, estadocliente) VALUES
 ('c0000000-0000-0000-0000-000000000001', 'ICSA Minería & Energía SpA', '76.543.210-K', '+56 2 2890 1000', 'faenas@icsamineria.cl', 'Av. Vitacura 2670, Of. 801', 'Las Condes', 'ICSA Minería SpA', 'Activo'),
 ('c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Av. Costanera Sur 2760', 'Las Condes', 'Entel PCS Telecomunicaciones S.A.', 'Activo'),
@@ -316,43 +315,43 @@ INSERT INTO public.clients (id, nombrecliente, rutcliente, telefonocliente, emai
 ('c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '61.704.000-K', '+56 34 249 2000', 'contratos.telecom@codelco.cl', 'Camino Internacional s/n', 'Los Andes', 'Corporación Nacional del Cobre', 'Activo')
 ON CONFLICT (id) DO NOTHING;
 
--- D. PROYECTOS DE FAENA
+-- D. PROYECTOS DE FAENA (Prefijo: b000...)
 INSERT INTO public.projects (id, name, status, clientid, clientname, startdate, enddate, teamnames, summary) VALUES
-('p0000000-0000-0000-0000-000000000001', 'Tendido y Fusión Troncal 48 Hilos - Faena Minera Centinela', 'active', 'c0000000-0000-0000-0000-000000000001', 'ICSA Minería & Energía SpA', '2026-03-01T08:00:00Z', '2026-04-30T18:00:00Z', '["Carlos Muñoz (Supervisor)", "Ramiro Contreras"]'::JSONB, 'Despliegue de red de fibra óptica monomodo dieléctrica para sensores IOT y cámaras perimetrales.'),
-('p0000000-0000-0000-0000-000000000002', 'Modernización de Nodos y Antenas 5G Sector Oriente', 'active', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '2026-02-15T09:00:00Z', '2026-03-31T18:00:00Z', '["Carlos Muñoz (Supervisor)"]'::JSONB, 'Conexión de radiobases con fibra óptica pre-conectorizada y medición de potencia óptica.'),
-('p0000000-0000-0000-0000-000000000003', 'Cableado Estructurado y Data Center Corporativo Torre Las Condes', 'active', 'c0000000-0000-0000-0000-000000000003', 'Movistar Empresas SpA', '2026-03-05T08:30:00Z', '2026-05-15T18:00:00Z', '["Ramiro Contreras", "Carlos Muñoz"]'::JSONB, 'Instalación de 12 racks de servidores, peinado de cables Cat 6A y rotulado bajo norma TIA-606.'),
-('p0000000-0000-0000-0000-000000000004', 'Monitoreo Sísmico y Fibras Subterráneas Mina Subterránea', 'active', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '2026-01-10T08:00:00Z', '2026-02-28T18:00:00Z', '["Carlos Muñoz (Supervisor)"]'::JSONB, 'Cierre y certificación técnica del anillo óptico de seguridad interior mina.')
+('b0000000-0000-0000-0000-000000000001', 'Tendido y Fusión Troncal 48 Hilos - Faena Minera Centinela', 'active', 'c0000000-0000-0000-0000-000000000001', 'ICSA Minería & Energía SpA', '2026-03-01T08:00:00Z', '2026-04-30T18:00:00Z', '["Carlos Muñoz (Supervisor)", "Ramiro Contreras"]'::JSONB, 'Despliegue de red de fibra óptica monomodo dieléctrica para sensores IOT y cámaras perimetrales.'),
+('b0000000-0000-0000-0000-000000000002', 'Modernización de Nodos y Antenas 5G Sector Oriente', 'active', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '2026-02-15T09:00:00Z', '2026-03-31T18:00:00Z', '["Carlos Muñoz (Supervisor)"]'::JSONB, 'Conexión de radiobases con fibra óptica pre-conectorizada y medición de potencia óptica.'),
+('b0000000-0000-0000-0000-000000000003', 'Cableado Estructurado y Data Center Corporativo Torre Las Condes', 'active', 'c0000000-0000-0000-0000-000000000003', 'Movistar Empresas SpA', '2026-03-05T08:30:00Z', '2026-05-15T18:00:00Z', '["Ramiro Contreras", "Carlos Muñoz"]'::JSONB, 'Instalación de 12 racks de servidores, peinado de cables Cat 6A y rotulado bajo norma TIA-606.'),
+('b0000000-0000-0000-0000-000000000004', 'Monitoreo Sísmico y Fibras Subterráneas Mina Subterránea', 'active', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '2026-01-10T08:00:00Z', '2026-02-28T18:00:00Z', '["Carlos Muñoz (Supervisor)"]'::JSONB, 'Cierre y certificación técnica del anillo óptico de seguridad interior mina.')
 ON CONFLICT (id) DO NOTHING;
 
--- E. INVENTARIO DE HERRAMIENTAS
+-- E. INVENTARIO DE HERRAMIENTAS (Prefijo: d000...)
 INSERT INTO public.herramientas (id, nombre, marca, modelo, serie, codigointerno, categoria, estado, asignadoa, imageurl, descripcion, notas) VALUES
-('h0000000-0000-0000-0000-000000000001', 'Fusionadora de Fibra Óptica 90S+', 'Fujikura', '90S+ Core Alignment', 'FUS-90S-8921', 'FUS-001', 'Instrumental Óptico', 'En Terreno', 'Carlos Muñoz', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Alineación por núcleo en 4 ejes con calibración de arco en tiempo real y tiempo de fusión de 7 segundos.', 'Retirada con firma digital para faena Minera Centinela.'),
-('h0000000-0000-0000-0000-000000000002', 'Certificador OTDR OptiFiber Pro', 'Fluke Networks', 'OFP-100-M/S', 'FLK-OTDR-4512', 'OTDR-002', 'Certificación', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80', 'Reflectómetro óptico monomodo/multimodo con mapeo de eventos EventMap y zona muerta ultra corta de 0.5 m.', 'Calibración al día (vigente hasta Dic 2026).'),
-('h0000000-0000-0000-0000-000000000003', 'Medidor de Potencia y Fuente Láser', 'EXFO', 'MAX-720C', 'EXF-PM-9021', 'OPM-003', 'Medición', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Medición de atenuación óptica en longitudes de onda 1310/1490/1550/1625 nm con registro interno.', 'En pañol central listo para despacho.'),
-('h0000000-0000-0000-0000-000000000004', 'Cortadora de Precisión CT50', 'Fujikura', 'CT50 High Precision', 'CT50-3341', 'CLEAV-004', 'Herramienta Manual', 'En Terreno', 'Ramiro Contreras', 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Cuchilla rotativa motorizada con conectividad Bluetooth para hasta 60.000 cortes en ángulo <0.5°.', 'Asignada a vehículo técnico Patente KJ-78-90.'),
-('h0000000-0000-0000-0000-000000000005', 'Taladro Percutor Inalámbrico 20V Max', 'DeWalt', 'DCD996B XR Brushless', 'DWT-20V-7811', 'TAL-005', 'Herramienta Eléctrica', 'Disponible', NULL, 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Motor sin carbones de 3 velocidades con mandril metálico nitrocarburado para fijaciones en hormigón.', 'Incluye 2 baterías de 5Ah y cargador rápido.'),
-('h0000000-0000-0000-0000-000000000006', 'Escalera Dieléctrica Telescópica 24P', 'Werner', 'D6224-2 Fibra de Vidrio', 'ESC-WER-1120', 'ESC-006', 'Seguridad en Altura', 'En Terreno', 'Carlos Muñoz', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Escalera de fibra de vidrio no conductora de electricidad, capacidad de carga 136 kg para faenas en postes.', 'Inspeccionada con cinta trimestral de seguridad.'),
-('h0000000-0000-0000-0000-000000000007', 'Generador Inverter Silencioso 2200W', 'Honda', 'EU22i', 'HND-GEN-9912', 'GEN-007', 'Generación Eléctrica', 'Disponible', NULL, 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Generador inverter de onda sinusoidal pura apto para instrumental electrónico delicado y fusión nocturna.', 'Revisión técnica de 50 horas realizada.'),
-('h0000000-0000-0000-0000-000000000008', 'Identificador de Fibra Activa OFI', 'Grandway', 'OFI-3 Optical Traffic', 'GRD-OFI-6644', 'OFI-008', 'Instrumental Óptico', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80', 'Detección no destructiva de señales ópticas moduladas de 270Hz, 1kHz y 2kHz en fibras vivas.', 'En estuche protector rígido.')
+('d0000000-0000-0000-0000-000000000001', 'Fusionadora de Fibra Óptica 90S+', 'Fujikura', '90S+ Core Alignment', 'FUS-90S-8921', 'FUS-001', 'Instrumental Óptico', 'En Terreno', 'Carlos Muñoz', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Alineación por núcleo en 4 ejes con calibración de arco en tiempo real y tiempo de fusión de 7 segundos.', 'Retirada con firma digital para faena Minera Centinela.'),
+('d0000000-0000-0000-0000-000000000002', 'Certificador OTDR OptiFiber Pro', 'Fluke Networks', 'OFP-100-M/S', 'FLK-OTDR-4512', 'OTDR-002', 'Certificación', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80', 'Reflectómetro óptico monomodo/multimodo con mapeo de eventos EventMap y zona muerta ultra corta de 0.5 m.', 'Calibración al día (vigente hasta Dic 2026).'),
+('d0000000-0000-0000-0000-000000000003', 'Medidor de Potencia y Fuente Láser', 'EXFO', 'MAX-720C', 'EXF-PM-9021', 'OPM-003', 'Medición', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Medición de atenuación óptica en longitudes de onda 1310/1490/1550/1625 nm con registro interno.', 'En pañol central listo para despacho.'),
+('d0000000-0000-0000-0000-000000000004', 'Cortadora de Precisión CT50', 'Fujikura', 'CT50 High Precision', 'CT50-3341', 'CLEAV-004', 'Herramienta Manual', 'En Terreno', 'Ramiro Contreras', 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Cuchilla rotativa motorizada con conectividad Bluetooth para hasta 60.000 cortes en ángulo <0.5°.', 'Asignada a vehículo técnico Patente KJ-78-90.'),
+('d0000000-0000-0000-0000-000000000005', 'Taladro Percutor Inalámbrico 20V Max', 'DeWalt', 'DCD996B XR Brushless', 'DWT-20V-7811', 'TAL-005', 'Herramienta Eléctrica', 'Disponible', NULL, 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Motor sin carbones de 3 velocidades con mandril metálico nitrocarburado para fijaciones en hormigón.', 'Incluye 2 baterías de 5Ah y cargador rápido.'),
+('d0000000-0000-0000-0000-000000000006', 'Escalera Dieléctrica Telescópica 24P', 'Werner', 'D6224-2 Fibra de Vidrio', 'ESC-WER-1120', 'ESC-006', 'Seguridad en Altura', 'En Terreno', 'Carlos Muñoz', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Escalera de fibra de vidrio no conductora de electricidad, capacidad de carga 136 kg para faenas en postes.', 'Inspeccionada con cinta trimestral de seguridad.'),
+('d0000000-0000-0000-0000-000000000007', 'Generador Inverter Silencioso 2200W', 'Honda', 'EU22i', 'HND-GEN-9912', 'GEN-007', 'Generación Eléctrica', 'Disponible', NULL, 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80', 'Generador inverter de onda sinusoidal pura apto para instrumental electrónico delicado y fusión nocturna.', 'Revisión técnica de 50 horas realizada.'),
+('d0000000-0000-0000-0000-000000000008', 'Identificador de Fibra Activa OFI', 'Grandway', 'OFI-3 Optical Traffic', 'GRD-OFI-6644', 'OFI-008', 'Instrumental Óptico', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80', 'Detección no destructiva de señales ópticas moduladas de 270Hz, 1kHz y 2kHz en fibras vivas.', 'En estuche protector rígido.')
 ON CONFLICT (id) DO NOTHING;
 
--- F. MOVIMIENTOS HISTÓRICOS DE HERRAMIENTAS
+-- F. MOVIMIENTOS HISTÓRICOS DE HERRAMIENTAS (Prefijo: e000...)
 INSERT INTO public.tool_movements (id, toolid, toolname, action, responsible, comment, status) VALUES
-('m0000000-0000-0000-0000-000000000001', 'h0000000-0000-0000-0000-000000000001', 'Fusionadora de Fibra Óptica 90S+', 'Asignación', 'Carlos Muñoz', 'Retiro para faena en Minera Centinela. Equipo verificado con arco de prueba.', 'Verificado'),
-('m0000000-0000-0000-0000-000000000004', 'h0000000-0000-0000-0000-000000000004', 'Cortadora de Precisión CT50', 'Asignación', 'Ramiro Contreras', 'Asignada a camioneta de soporte técnico.', 'Verificado')
+('e0000000-0000-0000-0000-000000000001', 'd0000000-0000-0000-0000-000000000001', 'Fusionadora de Fibra Óptica 90S+', 'Asignación', 'Carlos Muñoz', 'Retiro para faena en Minera Centinela. Equipo verificado con arco de prueba.', 'Verificado'),
+('e0000000-0000-0000-0000-000000000004', 'd0000000-0000-0000-0000-000000000004', 'Cortadora de Precisión CT50', 'Asignación', 'Ramiro Contreras', 'Asignada a camioneta de soporte técnico.', 'Verificado')
 ON CONFLICT (id) DO NOTHING;
 
 -- G. ÓRDENES DE TRABAJO ACTIVAS
 INSERT INTO public.ordenes (id, folio, projectid, clientid, clientname, clientrut, clientphone, clientemail, branch, address, status, description, tipotrabajo, techname, techrut, startdate, iscert, islabeled) VALUES
-('ot-1042', 1042, 'p0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'ICSA Minería & Energía SpA', '76.543.210-K', '+56 2 2890 1000', 'faenas@icsamineria.cl', 'Planta Concentradora', 'Km 45 Camino a Sierra Gorda', 'En Proceso', 'Fusión de 24 hilos en mufa subterránea y empalme a bandeja de rack principal.', 'Fusión Fibra Óptica', 'Carlos Muñoz', '15.432.876-1', '2026-03-10T08:00:00Z', true, true),
-('ot-1043', 1043, 'p0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Sitio Celular Oriente 14', 'Av. Vitacura 5400', 'Firmada en Terreno', 'Montaje de distribuidor óptico ODF y pruebas de atenuación con reflectómetro.', 'Certificación Óptica', 'Ramiro Contreras', '16.890.123-4', '2026-03-11T09:30:00Z', true, true),
-('ot-1044', 1044, 'p0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000003', 'Movistar Empresas SpA', '76.123.456-7', '+56 2 2690 4000', 'soporte.b2b@movistar.cl', 'Edificio Corporativo Piso 12', 'Plaza Baquedano 44', 'Pendiente', 'Tendido de canaleta perimetral y peinado de 48 enlaces Cat 6A en rack de telecomunicaciones.', 'Cableado Estructurado', 'Carlos Muñoz', '15.432.876-1', '2026-03-12T08:30:00Z', false, true)
+('ot-1042', 1042, 'b0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', 'ICSA Minería & Energía SpA', '76.543.210-K', '+56 2 2890 1000', 'faenas@icsamineria.cl', 'Planta Concentradora', 'Km 45 Camino a Sierra Gorda', 'En Proceso', 'Fusión de 24 hilos en mufa subterránea y empalme a bandeja de rack principal.', 'Fusión Fibra Óptica', 'Carlos Muñoz', '15.432.876-1', '2026-03-10T08:00:00Z', true, true),
+('ot-1043', 1043, 'b0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Sitio Celular Oriente 14', 'Av. Vitacura 5400', 'Firmada en Terreno', 'Montaje de distribuidor óptico ODF y pruebas de atenuación con reflectómetro.', 'Certificación Óptica', 'Ramiro Contreras', '16.890.123-4', '2026-03-11T09:30:00Z', true, true),
+('ot-1044', 1044, 'b0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000003', 'Movistar Empresas SpA', '76.123.456-7', '+56 2 2690 4000', 'soporte.b2b@movistar.cl', 'Edificio Corporativo Piso 12', 'Plaza Baquedano 44', 'Pendiente', 'Tendido de canaleta perimetral y peinado de 48 enlaces Cat 6A en rack de telecomunicaciones.', 'Cableado Estructurado', 'Carlos Muñoz', '15.432.876-1', '2026-03-12T08:30:00Z', false, true)
 ON CONFLICT (id) DO NOTHING;
 
 -- H. HISTORIAL DE ÓRDENES CERRADAS
 INSERT INTO public.historial (id, folio, projectid, clientid, clientname, clientrut, clientphone, clientemail, branch, address, status, description, tipotrabajo, techname, techrut, startdate, iscert, islabeled, isprojectsummary) VALUES
-('ot-1039', 1039, 'p0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '61.704.000-K', '+56 34 249 2000', 'contratos.telecom@codelco.cl', 'Túnel Interior Mina Nivel 3', 'Camino Internacional s/n', 'Completado', 'Acta Final de Entrega: Empalme y certificación de anillo óptico de monitoreo sísmico con 100% de reflectometrías aprobadas.', 'Certificación Óptica', 'Carlos Muñoz', '15.432.876-1', '2026-02-20T08:00:00Z', true, true, true),
-('ot-1040', 1040, 'p0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Estación Base Providencia', 'Av. Andrés Bello 2100', 'Completado', 'Reemplazo de latiguillos monomodo y limpieza de conectores con microscopio digital.', 'Mantenimiento Preventivo', 'Ramiro Contreras', '16.890.123-4', '2026-02-26T10:00:00Z', true, true, false)
+('ot-1039', 1039, 'b0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '61.704.000-K', '+56 34 249 2000', 'contratos.telecom@codelco.cl', 'Túnel Interior Mina Nivel 3', 'Camino Internacional s/n', 'Completado', 'Acta Final de Entrega: Empalme y certificación de anillo óptico de monitoreo sísmico con 100% de reflectometrías aprobadas.', 'Certificación Óptica', 'Carlos Muñoz', '15.432.876-1', '2026-02-20T08:00:00Z', true, true, true),
+('ot-1040', 1040, 'b0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Estación Base Providencia', 'Av. Andrés Bello 2100', 'Completado', 'Reemplazo de latiguillos monomodo y limpieza de conectores con microscopio digital.', 'Mantenimiento Preventivo', 'Ramiro Contreras', '16.890.123-4', '2026-02-26T10:00:00Z', true, true, false)
 ON CONFLICT (id) DO NOTHING;
 
 -- I. PREGUNTAS DINÁMICAS DE PREVENCIÓN DE RIESGOS (HPT)
@@ -399,7 +398,7 @@ INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('epp', 'auditivo', 'Protector Auditivo tipo Fono / Tapón', 8)
 ON CONFLICT (category, item_key) DO NOTHING;
 
--- J. REGISTRO DEMO DE HPT (Prevención de Riesgos)
+-- J. REGISTRO DEMO DE HPT (Prefijo: f000...)
 INSERT INTO public.hpt (id, folio, projectid, projectname, supervisorname, supervisorrut, trabajorealizar, status, firmasupervisor) VALUES
-('h0000000-0000-0000-0000-000000000001', 501, 'p0000000-0000-0000-0000-000000000001', 'Tendido y Fusión Troncal 48 Hilos - Faena Minera Centinela', 'Carlos Muñoz', '15.432.876-1', 'Ingreso a cámaras subterráneas y tendido de cable óptico con arnés y detector de gases.', 'Firmado', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
+('f0000000-0000-0000-0000-000000000001', 501, 'b0000000-0000-0000-0000-000000000001', 'Tendido y Fusión Troncal 48 Hilos - Faena Minera Centinela', 'Carlos Muñoz', '15.432.876-1', 'Ingreso a cámaras subterráneas y tendido de cable óptico con arnés y detector de gases.', 'Firmado', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
 ON CONFLICT (id) DO NOTHING;
