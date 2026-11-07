@@ -84,11 +84,11 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
                 <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 800; text-transform: uppercase;">Acceso al Sistema</span>
-                <p>El software cuenta con segregación estricta de funciones según el perfil del usuario:</p>
+                <p>El software cuenta con segregación estricta de funciones según el perfil de cada colaborador:</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 3px;">
                   <li><strong>Administrador:</strong> Control de contratos, pañol, clientes y auditorías.</li>
-                  <li><strong>Supervisor Técnico:</strong> Despacho de OTs, asignación de cuadrillas y firmas.</li>
-                  <li><strong>Prevencionista de Riesgos:</strong> Checklists HPT y charlas obligatorias.</li>
+                  <li><strong>Supervisor Técnico:</strong> Despacho de OTs, asignación de cuadrillas y firmas en terreno.</li>
+                  <li><strong>Prevencionista de Riesgos:</strong> Checklists HPT y charlas de 5 minutos obligatorias.</li>
                 </ul>
                 <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 8px 10px; color: #115e59; font-weight: 500; font-size: 12px;">
                   💡 <strong>Ingreso Automático:</strong> Para conocer la app sin fricción, has ingresado directamente como <strong>Administrador General</strong> con permisos totales.
@@ -118,7 +118,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
                   <li><strong>Órdenes Pendientes:</strong> Trabajos que los técnicos están ejecutando en terreno.</li>
                   <li><strong>Stock en Pañol:</strong> Equipos disponibles vs. entregados bajo firma.</li>
                 </ul>
-                <p style="font-size: 12px; color: #64748b; font-style: italic; margin-top: 2px;">A continuación recorreremos el ciclo operativo completo de una faena técnica paso a paso.</p>
+                <p style="font-size: 12px; color: #64748b; font-style: italic; margin-top: 2px;">A continuación recorreremos el ciclo operativo completo de cómo se ejecuta una faena técnica de punta a punta.</p>
               </div>
             `,
             side: "top",
@@ -233,16 +233,20 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-btn-new-ot",
           popover: {
-            title: "📋 Paso 6: Emisión Rápida de la Orden de Trabajo",
+            title: "📋 Paso 6: ¿Cómo se Crea una OT en Terreno? (Paso a Paso)",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fae8ff; color: #86198f; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 4 de 6 • Despacho Digital</span>
-                <p>El supervisor o técnico presiona este botón para abrir la OT en terreno desde su celular o tablet:</p>
-                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Asignación Automática:</strong> Vincula la orden a la obra minera y cliente respectivo.</li>
-                  <li><strong>Ubicación Exacta:</strong> Registra dirección, planta concentradora o cámara subterránea a intervenir.</li>
-                  <li><strong>Emisión en 2 Minutos:</strong> Cero formularios de papel, disponible de inmediato para el equipo en terreno.</li>
-                </ul>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fae8ff; color: #86198f; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 4 de 6 • Emisión Técnica en Faena</span>
+                <p>Al presionar <strong>+ Nueva Orden de Trabajo</strong>, el supervisor en terreno completa el formulario técnico optimizado para celular/tablet:</p>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                  <div><strong>1. Selección de Mandante y Obra:</strong> Se elige el cliente (ej: <em>ICSA Minería</em>) y el proyecto activo. El sistema autocompleta RUT, teléfono, contacto y dirección de faena.</div>
+                  <div><strong>2. Especificación Técnica:</strong> Se define la labor (<em>Fusión Fibra Óptica</em>, <em>Certificación OTDR</em> o <em>Cableado Cat 6A</em>) y se cuantifican mufas e hilos intervenidos.</div>
+                  <div><strong>3. Asignación de Cuadrilla:</strong> Se asigna el técnico responsable y su ayudante de terreno.</div>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; justify-content: space-between; margin-top: 4px;">
+                  <span style="font-size: 11px; color: #64748b;">⏱️ Tiempo de llenado: <strong>&lt; 2 minutos</strong></span>
+                  <a href="/work-orders/new" target="_blank" style="display: inline-block; background: #0d9488; color: white; padding: 4px 10px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 11px;">Abrir Formulario en Vivo ↗</a>
+                </div>
               </div>
             `,
             side: "bottom",
@@ -264,16 +268,22 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-orders-container",
           popover: {
-            title: "⚡ Paso 7: Ejecución & Firma Digital Híbrida",
+            title: "⚡ Paso 7: Ejecución en Terreno & Doble Firma Digital",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 5 de 6 • Firma en Pantalla o Remota</span>
-                <p>Durante y al terminar las labores técnicas (fusión, empalme, cableado estructurado):</p>
-                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Fotos Comprimidas de Respaldo:</strong> Subida optimizada de evidencias fotográficas para redes móviles lentas (3G) en faena.</li>
-                  <li><strong>Firma Presencial en Pantalla:</strong> El cliente valida el servicio con su dedo en la tablet del técnico.</li>
-                  <li><strong>Firma Remota por Email con Token:</strong> Si el supervisor del cliente no está en terreno, se le envía un enlace seguro con token para firmar a distancia desde su oficina.</li>
-                </ul>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 5 de 6 • Validación Técnica y Cierre</span>
+                <p>Una vez terminada la labor física en el poste, mufa o data center, el técnico cierra la faena en la app:</p>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                  <div><strong>📸 Evidencia Fotográfica:</strong> Se capturan fotos del empalme y reflectometría. El software las comprime en el celular para subirlas sin error con señal débil (3G).</div>
+                  <div><strong>✍️ Firma 1 (Técnico):</strong> El técnico a cargo estampa su firma en la pantalla validando la ejecución.</div>
+                  <div><strong>✍️ Firma 2 (Cliente):</strong>
+                    <ul style="margin: 3px 0 0 14px; padding: 0; list-style-type: circle;">
+                      <li><em>Presencial:</em> El supervisor del cliente firma con su dedo en la tablet.</li>
+                      <li><em>Remota por Email:</em> Si el cliente está en su oficina, el sistema le envía un <strong>enlace seguro con token único</strong> para firmar desde su computador.</li>
+                    </ul>
+                  </div>
+                </div>
+                <p style="font-size: 12px; color: #047857; font-weight: 600; margin-top: 2px;">✅ Con ambas firmas estampadas, la OT se bloquea contra modificaciones y pasa a Historial.</p>
               </div>
             `,
             side: "top",
@@ -295,16 +305,16 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-history-container",
           popover: {
-            title: "📄 Paso 8: Informe Técnico Final en PDF",
+            title: "📄 Paso 8: Generación Automática del Acta en PDF",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
                 <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ffedd5; color: #c2410c; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 6 de 6 • Facturación Inmediata</span>
-                <p>Al completarse la orden, el motor del software consolida todo el expediente en un solo informe técnico formal en PDF:</p>
-                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Consolidación Automática:</strong> Folio, materiales utilizados, fotografías de evidencia, mediciones reflectométricas y ambas firmas digitales estampadas.</li>
-                  <li><strong>Descarga en 1 Clic:</strong> Presiona el icono de descarga en cualquier orden del historial para obtener el acta formal en PDF.</li>
-                  <li><strong>Cobro Rápido:</strong> Se envía directamente a contabilidad o al mandante para tramitar el estado de pago sin esperar días de procesamiento manual.</li>
-                </ul>
+                <p>Al quedar la orden firmada, el sistema consolida automáticamente todo el expediente:</p>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                  <div><strong>1. Expediente Completo:</strong> Folio único, datos de cliente, detalles técnicos, fotos de respaldo del empalme y ambas firmas estampadas.</div>
+                  <div><strong>2. Descarga en 1 Clic:</strong> Presiona el icono <span style="background: #e2e8f0; padding: 1px 6px; border-radius: 4px; font-weight: bold;">📥 Descargar PDF</span> en cualquier orden del historial para ver el informe real.</div>
+                  <div><strong>3. Cobro Inmediato:</strong> El PDF generado tiene validez legal y se despacha a contabilidad para cursar el estado de pago de inmediato sin esperar días de redacción manual.</div>
+                </div>
               </div>
             `,
             side: "top",

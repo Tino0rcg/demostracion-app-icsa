@@ -94,9 +94,9 @@ export default function LoginPage() {
 
     try {
       await autoDemoLogin(role);
-      window.location.href = "/dashboard?tour=true&step=2";
+      window.location.href = "/dashboard?tour=true&step=1";
     } catch {
-      window.location.href = "/dashboard?tour=true&step=2";
+      window.location.href = "/dashboard?tour=true&step=1";
     }
   };
 
