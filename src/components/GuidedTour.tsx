@@ -54,15 +54,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
       } catch {}
     }
 
-    // Pre-select initial tab if needed
-    if (startIndex === 0 || startIndex === 1 || startIndex === 4 || startIndex === 6 || startIndex === 8) {
+    // Pre-select initial tab based on step index
+    if (startIndex === 0 || startIndex === 1 || startIndex === 4 || startIndex === 5 || startIndex === 8) {
       onTabChangeRef.current?.("dashboard");
     } else if (startIndex === 2) {
       onTabChangeRef.current?.("projects");
     } else if (startIndex === 3) {
-      onTabChangeRef.current?.("orders");
-    } else if (startIndex === 5) {
       onTabChangeRef.current?.("tools");
+    } else if (startIndex === 6) {
+      onTabChangeRef.current?.("orders");
     } else if (startIndex === 7) {
       onTabChangeRef.current?.("order-history");
     }
@@ -71,7 +71,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
       showProgress: true,
       animate: true,
       allowClose: true,
-      waitForElement: 2000,
+      waitForElement: 2500,
       overlayColor: "rgba(10, 25, 47, 0.85)",
       nextBtnText: "Siguiente →",
       prevBtnText: "← Anterior",
@@ -80,12 +80,18 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-welcome",
           popover: {
-            title: "🔐 Paso 1: Autenticación & Control de Roles (Omitido)",
+            title: "🔐 Paso 1: Autenticación & Perfiles de Faena",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>El sistema cuenta con segregación estricta de funciones para <strong>Administradores</strong>, <strong>Supervisores de Faena</strong> y <strong>Prevención de Riesgos</strong>.</p>
-                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 8px 10px; color: #115e59; font-weight: 500;">
-                  💡 <strong>Demostración Activa:</strong> Para que conozcas la aplicación sin fricción, <strong>el login se completó automáticamente</strong> como <strong>Administrador General</strong>, dándote acceso total a todos los módulos y herramientas.
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 800; text-transform: uppercase;">Acceso al Sistema</span>
+                <p>El software cuenta con segregación estricta de funciones según el perfil del usuario:</p>
+                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 3px;">
+                  <li><strong>Administrador:</strong> Control de contratos, pañol, clientes y auditorías.</li>
+                  <li><strong>Supervisor Técnico:</strong> Despacho de OTs, asignación de cuadrillas y firmas.</li>
+                  <li><strong>Prevencionista de Riesgos:</strong> Checklists HPT y charlas obligatorias.</li>
+                </ul>
+                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 8px 10px; color: #115e59; font-weight: 500; font-size: 12px;">
+                  💡 <strong>Ingreso Automático:</strong> Para conocer la app sin fricción, has ingresado directamente como <strong>Administrador General</strong> con permisos totales.
                 </div>
               </div>
             `,
@@ -102,15 +108,17 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-stats-grid",
           popover: {
-            title: "📊 Paso 2: Panel de Control (KPIs y Estado Operativo)",
+            title: "📊 Paso 2: Centro de Monitoreo & Despacho",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Aquí la jefatura supervisa en tiempo real las operaciones de la jornada:</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #e0e7ff; color: #4338ca; font-size: 11px; font-weight: 800; text-transform: uppercase;">Estado Operativo en Tiempo Real</span>
+                <p>Al iniciar la jornada, la jefatura supervisa el balance operacional de terreno:</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Proyectos en Ejecución:</strong> Obras activas y cuadrillas asignadas.</li>
-                  <li><strong>Órdenes Pendientes:</strong> Tareas en terreno con técnicos en faena.</li>
-                  <li><strong>Inventario en Pañol:</strong> Conteo de herramientas disponibles vs. en terreno.</li>
+                  <li><strong>Proyectos en Ejecución:</strong> Obras mineras y de telecomunicaciones en curso.</li>
+                  <li><strong>Órdenes Pendientes:</strong> Trabajos que los técnicos están ejecutando en terreno.</li>
+                  <li><strong>Stock en Pañol:</strong> Equipos disponibles vs. entregados bajo firma.</li>
                 </ul>
+                <p style="font-size: 12px; color: #64748b; font-style: italic; margin-top: 2px;">A continuación recorreremos el ciclo operativo completo de una faena técnica paso a paso.</p>
               </div>
             `,
             side: "top",
@@ -132,14 +140,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-projects-container",
           popover: {
-            title: "📁 Paso 3: Vista de Proyectos & Contratos Activos",
+            title: "📁 Paso 3: Planificación de Faena & Cuadrilla",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Módulo de gestión de contratos de infraestructura (Entel, Movistar, faenas mineras):</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fef3c7; color: #b45309; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 1 de 6 • Contrato & Cuadrilla</span>
+                <p>Toda faena parte con la apertura de un proyecto de infraestructura (ej. <em>Tendido Troncal 48 Hilos - Faena Centinela</em> o <em>Nodos 5G Entel</em>):</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Asignación de Cuadrillas:</strong> Define jefes de cuadrilla y técnicos autorizados.</li>
-                  <li><strong>Plazos Contractuales:</strong> Monitoreo de fecha de inicio y entrega estimada.</li>
-                  <li><strong>Buscador en Tiempo Real:</strong> Filtra por nombre de contrato o razón social del cliente.</li>
+                  <li><strong>Asignación de Personal:</strong> Se designa al supervisor a cargo y los técnicos autorizados para ingresar a faena.</li>
+                  <li><strong>Control de Plazos:</strong> Fecha de inicio, fecha límite de entrega y monitoreo de avances.</li>
+                  <li><strong>Trazabilidad por Mandante:</strong> Historial consolidado para ICSA Minería, Codelco, Entel o Movistar.</li>
                 </ul>
               </div>
             `,
@@ -148,62 +157,6 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("dashboard");
               waitForDOMElement("#tour-stats-grid").then(() => {
-                opts.driver.movePrevious();
-              });
-            },
-            onNextClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("orders");
-              waitForDOMElement("#tour-orders-container").then(() => {
-                opts.driver.moveNext();
-              });
-            }
-          }
-        },
-        {
-          element: "#tour-orders-container",
-          popover: {
-            title: "⚡ Paso 4: Órdenes de Trabajo en Terreno (OTs)",
-            description: `
-              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>¡Digitalización completa de faenas sin usar papel!</p>
-                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Folios Técnicos Únicos:</strong> Registro de materiales, cables y mediciones ópticas.</li>
-                  <li><strong>Fotos Comprimidas:</strong> Subida optimizada en terreno para faenas con baja señal móvil (3G).</li>
-                  <li><strong>Firma Digital Híbrida:</strong> Firma presencial en pantalla con el dedo, o envío de enlace seguro por correo para que el cliente firme a distancia.</li>
-                </ul>
-              </div>
-            `,
-            side: "top",
-            align: "start",
-            onPrevClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("projects");
-              waitForDOMElement("#tour-projects-container").then(() => {
-                opts.driver.movePrevious();
-              });
-            },
-            onNextClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("dashboard");
-              waitForDOMElement("#tour-btn-new-ot").then(() => {
-                opts.driver.moveNext();
-              });
-            }
-          }
-        },
-        {
-          element: "#tour-btn-new-ot",
-          popover: {
-            title: "📋 Paso 5: Emisión Rápida de Nuevas OTs en Faena",
-            description: `
-              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Los supervisores en terreno pueden presionar este botón desde su smartphone o tablet para abrir el formulario de emisión técnica:</p>
-                <p>Permite vincular la OT a un cliente, proyecto minero, ingresar dirección de intervención y asignar técnicos en menos de 2 minutos.</p>
-              </div>
-            `,
-            side: "bottom",
-            align: "center",
-            onPrevClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("orders");
-              waitForDOMElement("#tour-orders-container").then(() => {
                 opts.driver.movePrevious();
               });
             },
@@ -218,22 +171,23 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-tools-container",
           popover: {
-            title: "🔧 Paso 6: Control de Herramientas de Alto Costo",
+            title: "🔧 Paso 4: Retiro de Instrumental en Pañol",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Control de pañol para instrumentos críticos (fusionadoras de fibra, OTDRs, taladros y generadores):</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ccfbf1; color: #0f766e; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 2 de 6 • Trazabilidad con Firma</span>
+                <p>Antes de salir a faena, los técnicos retiran los equipos industriales de alto costo (Fusionadoras Fujikura 90S+, Reflectómetros OTDR Fluke):</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Toma con Firma en Pantalla:</strong> Para retirar un equipo, el técnico debe estampar su firma digital en la tablet.</li>
-                  <li><strong>Devolución Verificada:</strong> El pañolero revisa el estado físico antes de recibir, evitando extravíos.</li>
-                  <li><strong>Botón Nueva Herramienta:</strong> Permite ingresar nuevos equipos con código interno, marca, modelo y serie.</li>
+                  <li><strong>Retiro con Firma en Pantalla:</strong> El técnico estampa su firma biométrica en la tablet al recibir el equipo, generando un acta de entrega.</li>
+                  <li><strong>Devolución Inspeccionada:</strong> Al regresar de faena, el pañolero revisa el estado físico antes de recibirlo en el sistema.</li>
+                  <li><strong>Cero Pérdidas:</strong> Elimina extravíos o daños sin responsables en instrumentos de más de $5.000.000 CLP.</li>
                 </ul>
               </div>
             `,
             side: "top",
             align: "center",
             onPrevClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("dashboard");
-              waitForDOMElement("#tour-btn-new-ot").then(() => {
+              onTabChangeRef.current?.("projects");
+              waitForDOMElement("#tour-projects-container").then(() => {
                 opts.driver.movePrevious();
               });
             },
@@ -248,13 +202,15 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: () => (document.getElementById("tour-menu-hpt") || document.getElementById("tour-welcome") || document.body) as Element,
           popover: {
-            title: "🦺 Paso 7: Prevención de Riesgos & Charlas HPT",
+            title: "🦺 Paso 5: Seguridad Pre-Faena (HPT & Charla 5 Min)",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Módulo de cumplimiento normativo y seguridad laboral para mutualidades (ACHS / Mutual):</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 3 de 6 • Prevención ACHS / Mutual</span>
+                <p>Al llegar al sitio y antes de intervenir líneas o subir a postes:</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>HPT (Hoja de Planificación del Trabajo):</strong> Checklists obligatorios de EPP antes de intervenir faenas eléctricas o en altura.</li>
-                  <li><strong>Charlas de Seguridad de 5 Minutos:</strong> Registro de temario operativo con firma de asistencia de toda la cuadrilla.</li>
+                  <li><strong>HPT (Hoja de Planificación de Tarea):</strong> Checklist obligatorio de riesgos, interferencias y uso de EPPs certificados (arnés dieléctrico, detector de tensión).</li>
+                  <li><strong>Charla de Seguridad de 5 Minutos:</strong> Registro de temario diario y toma de firmas digitales de toda la cuadrilla en terreno.</li>
+                  <li><strong>Cumplimiento Legal:</strong> Respaldo auditado ante inspecciones de mutualidades y gerencia de faena.</li>
                 </ul>
               </div>
             `,
@@ -263,6 +219,68 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             onPrevClick: (_el, _step, opts) => {
               onTabChangeRef.current?.("tools");
               waitForDOMElement("#tour-tools-container").then(() => {
+                opts.driver.movePrevious();
+              });
+            },
+            onNextClick: (_el, _step, opts) => {
+              onTabChangeRef.current?.("dashboard");
+              waitForDOMElement("#tour-btn-new-ot").then(() => {
+                opts.driver.moveNext();
+              });
+            }
+          }
+        },
+        {
+          element: "#tour-btn-new-ot",
+          popover: {
+            title: "📋 Paso 6: Emisión Rápida de la Orden de Trabajo",
+            description: `
+              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fae8ff; color: #86198f; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 4 de 6 • Despacho Digital</span>
+                <p>El supervisor o técnico presiona este botón para abrir la OT en terreno desde su celular o tablet:</p>
+                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
+                  <li><strong>Asignación Automática:</strong> Vincula la orden a la obra minera y cliente respectivo.</li>
+                  <li><strong>Ubicación Exacta:</strong> Registra dirección, planta concentradora o cámara subterránea a intervenir.</li>
+                  <li><strong>Emisión en 2 Minutos:</strong> Cero formularios de papel, disponible de inmediato para el equipo en terreno.</li>
+                </ul>
+              </div>
+            `,
+            side: "bottom",
+            align: "center",
+            onPrevClick: (_el, _step, opts) => {
+              onTabChangeRef.current?.("dashboard");
+              waitForDOMElement("#tour-menu-hpt, #tour-welcome").then(() => {
+                opts.driver.movePrevious();
+              });
+            },
+            onNextClick: (_el, _step, opts) => {
+              onTabChangeRef.current?.("orders");
+              waitForDOMElement("#tour-orders-container").then(() => {
+                opts.driver.moveNext();
+              });
+            }
+          }
+        },
+        {
+          element: "#tour-orders-container",
+          popover: {
+            title: "⚡ Paso 7: Ejecución & Firma Digital Híbrida",
+            description: `
+              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 5 de 6 • Firma en Pantalla o Remota</span>
+                <p>Durante y al terminar las labores técnicas (fusión, empalme, cableado estructurado):</p>
+                <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
+                  <li><strong>Fotos Comprimidas de Respaldo:</strong> Subida optimizada de evidencias fotográficas para redes móviles lentas (3G) en faena.</li>
+                  <li><strong>Firma Presencial en Pantalla:</strong> El cliente valida el servicio con su dedo en la tablet del técnico.</li>
+                  <li><strong>Firma Remota por Email con Token:</strong> Si el supervisor del cliente no está en terreno, se le envía un enlace seguro con token para firmar a distancia desde su oficina.</li>
+                </ul>
+              </div>
+            `,
+            side: "top",
+            align: "start",
+            onPrevClick: (_el, _step, opts) => {
+              onTabChangeRef.current?.("dashboard");
+              waitForDOMElement("#tour-btn-new-ot").then(() => {
                 opts.driver.movePrevious();
               });
             },
@@ -277,21 +295,23 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-history-container",
           popover: {
-            title: "📄 Paso 8: Historial & Actas de Cierre en PDF",
+            title: "📄 Paso 8: Informe Técnico Final en PDF",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Al concluir faenas, el sistema genera automáticamente el expediente técnico:</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #ffedd5; color: #c2410c; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 6 de 6 • Facturación Inmediata</span>
+                <p>Al completarse la orden, el motor del software consolida todo el expediente en un solo informe técnico formal en PDF:</p>
                 <ul style="padding-left: 16px; margin: 0; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
-                  <li><strong>Consolidación en 1 Clic:</strong> Agrupa materiales, fotos de respaldo, datos de cliente y firmas capturadas.</li>
-                  <li><strong>Descarga en PDF Oficial:</strong> Acta formal lista para enviar a cobro, facturación o auditoría técnica.</li>
+                  <li><strong>Consolidación Automática:</strong> Folio, materiales utilizados, fotografías de evidencia, mediciones reflectométricas y ambas firmas digitales estampadas.</li>
+                  <li><strong>Descarga en 1 Clic:</strong> Presiona el icono de descarga en cualquier orden del historial para obtener el acta formal en PDF.</li>
+                  <li><strong>Cobro Rápido:</strong> Se envía directamente a contabilidad o al mandante para tramitar el estado de pago sin esperar días de procesamiento manual.</li>
                 </ul>
               </div>
             `,
             side: "top",
             align: "start",
             onPrevClick: (_el, _step, opts) => {
-              onTabChangeRef.current?.("dashboard");
-              waitForDOMElement("#tour-menu-hpt, #tour-welcome").then(() => {
+              onTabChangeRef.current?.("orders");
+              waitForDOMElement("#tour-orders-container").then(() => {
                 opts.driver.movePrevious();
               });
             },
@@ -306,11 +326,14 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-floating-btn",
           popover: {
-            title: "🎉 Paso 9: ¡Todo Listo para Operar!",
+            title: "🎉 Paso 9: ¡Ciclo de Faena Completado!",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>Has recorrido todos los módulos del software de ICSA. Ahora puedes interactuar libremente con la aplicación o reiniciar el recorrido cuando desees.</p>
-                <p style="font-size: 11px; color: #64748b; font-weight: 600;">Este botón flotante permanece disponible para repetir el tour en cualquier momento.</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #e0f2fe; color: #0284c7; font-size: 11px; font-weight: 800; text-transform: uppercase;">Demostración Finalizada</span>
+                <p>Has recorrido el flujo operativo completo: desde la adjudicación de obra y retiro de herramientas, hasta la firma digital y generación del PDF de cobro.</p>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; color: #334155; font-size: 12px;">
+                  👉 <strong>¡Pruébalo libremente!</strong> Puedes crear órdenes, devolver herramientas, descargar informes o reiniciar este tour con el botón flotante inferior.
+                </div>
               </div>
             `,
             side: "left",
