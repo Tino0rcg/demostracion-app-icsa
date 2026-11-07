@@ -42,6 +42,7 @@ import { PhotoUpload } from "@/components/PhotoUpload";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ToolCard } from "@/components/ToolCard";
 import { SignaturePad } from "@/components/SignaturePad";
+import { GuidedTour } from "@/components/GuidedTour";
 
 function DashboardContent() {
   const { user, isUserLoading } = useUser();
@@ -304,6 +305,7 @@ function DashboardContent() {
         ].map((item) => (
           <Button
             key={item.id}
+            id={item.id === 'hpt' ? 'tour-menu-hpt' : undefined}
             variant="ghost"
             className={cn(
               "w-full justify-start gap-3 h-12 rounded-xl font-bold text-sm transition-all text-left",
@@ -436,7 +438,7 @@ function DashboardContent() {
 
       <main className="flex-1 p-4 md:p-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
+          <div id="tour-welcome">
             <h1 className="text-2xl font-black text-primary uppercase tracking-tighter">
               {getPageTitle()}
             </h1>
@@ -456,12 +458,12 @@ function DashboardContent() {
               >
                 <RefreshCw size={18} className="group-active:animate-spin" />
               </Button>
-              <Link href="/projects/new">
+              <Link href="/projects/new" id="tour-btn-new-project">
                 <Button className="bg-primary hover:bg-primary/90 font-black rounded-2xl h-11 px-6 shadow-[0_8px_20px_rgba(var(--primary),0.2)] transition-all hover:-translate-y-0.5 active:scale-95">
                   <Plus size={18} className="mr-2" /> Nuevo Proyecto
                 </Button>
               </Link>
-              <Link href="/work-orders/new">
+              <Link href="/work-orders/new" id="tour-btn-new-ot">
                 <Button className="bg-accent hover:bg-accent/90 text-primary font-black rounded-2xl h-11 px-6 shadow-[0_8px_20px_rgba(var(--accent),0.3)] transition-all hover:-translate-y-0.5 active:scale-95">
                   <Plus size={18} className="mr-2" /> Crear OT
                 </Button>
@@ -472,7 +474,7 @@ function DashboardContent() {
 
         {activeTab === "dashboard" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 animate-fade-in">
-            <Card className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+            <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
               <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
                 <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
                   <FolderOpen size={16} /> Proyectos en Ejecución
@@ -483,7 +485,7 @@ function DashboardContent() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+            <Card id="tour-card-orders" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
               <CardHeader className="bg-accent/[0.08] p-6 border-b border-accent/10">
                 <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
                   <ClipboardList size={16} /> Órdenes Pendientes
@@ -494,7 +496,7 @@ function DashboardContent() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
+            <Card id="tour-card-tools" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
               <CardHeader className="bg-primary/[0.05] p-6 border-b border-primary/5">
                 <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center justify-between">
                   <div className="flex items-center gap-3"><Wrench size={16} /> Control Herramientas</div>
@@ -1898,6 +1900,8 @@ function OrderTable({ orders, isLoading, type, setDeleteConfirm, isAdmin }: { or
           })
         )}
       </div>
+
+      <GuidedTour />
     </div>
   );
 }

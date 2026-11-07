@@ -117,7 +117,56 @@ export default function LoginPage() {
                 </Button>
               </div>
             </div>
-            <Button type="submit" className="w-full bg-primary h-14 text-lg font-black shadow-lg transition-all active:scale-95 rounded-xl" disabled={loading}>
+
+            {/* Quick Demo Access Buttons */}
+            <div className="pt-2 border-t border-muted/50 space-y-2">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block text-center">
+                Acceso Rápido Modo Demostración:
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEmail("admin@icsa.cl");
+                    setPassword("admin123");
+                  }}
+                  className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
+                  title="Entrar como Administrador"
+                >
+                  👑 Admin
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEmail("supervisor@icsa.cl");
+                    setPassword("supervisor123");
+                  }}
+                  className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
+                  title="Entrar como Supervisor de Terreno"
+                >
+                  👷 Supervisor
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEmail("prevencion@icsa.cl");
+                    setPassword("prevencion123");
+                  }}
+                  className="text-[11px] font-bold border-primary/20 hover:bg-primary/10 h-9 px-1 truncate cursor-pointer"
+                  title="Entrar como Prevencionista de Riesgos"
+                >
+                  🦺 Seguridad
+                </Button>
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full bg-primary h-14 text-lg font-black shadow-lg transition-all active:scale-95 rounded-xl cursor-pointer" disabled={loading}>
               <LogIn className="mr-2" size={20} />
               <Label htmlFor="password">{loading ? "Verificando..." : "Entrar al Portal"}</Label>
             </Button>
