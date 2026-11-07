@@ -1,25 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 
+import { localSupabase } from './local-db';
+
 // Creamos una función interna para obtener el cliente, validando las variables
 function createSupabaseClient() {
+  const useLocal = process.env.USE_LOCAL_DB === 'true' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (useLocal) {
+    console.log("[DB_ROUTER] Operando en MODO LOCAL (Base de datos persistente en disco data/local-db.json)");
+    return localSupabase;
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || url.includes('placeholder')) {
-    const errorMsg = "NEXT_PUBLIC_SUPABASE_URL is missing";
-    console.error(errorMsg);
-    // Solo lanzamos error en tiempo de ejecución real, no durante el build de Next.js
-    if (typeof window === 'undefined' && process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV) {
-       // Si no hay VERCEL_ENV, podría ser un build local o un entorno mal configurado. 
-       // Pero mejor retorno un cliente que falle al usarse.
-    }
-    return createClient('https://placeholder.supabase.co', 'placeholder-key');
+    console.log("[DB_ROUTER] URL no configurada, usando MODO LOCAL automáticamente");
+    return localSupabase;
   }
 
   if (!key || key.includes('placeholder')) {
-    const errorMsg = "SUPABASE_SERVICE_ROLE_KEY is missing";
-    console.error(errorMsg);
-    return createClient(url, 'placeholder-key');
+    console.log("[DB_ROUTER] Key no configurada, usando MODO LOCAL automáticamente");
+    return localSupabase;
   }
 
   return createClient(url, key, {

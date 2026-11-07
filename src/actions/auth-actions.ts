@@ -28,7 +28,19 @@ export async function loginAction(email: string, password: string) {
             .eq('password', password)
             .single();
 
-        if (error || !user) {
+        if (error) {
+            console.error("[AUTH_ERROR] Error al consultar usuario:", error);
+            // PGRST116 es el código de PostgREST cuando no encuentra ninguna fila
+            if (error.code === 'PGRST116') {
+                return { success: false, error: 'Credenciales inválidas' };
+            }
+            return { 
+                success: false, 
+                error: `Error de conexión con la base de datos: ${error.message || 'No se pudo contactar a Supabase'}. Revisa si tu proyecto está pausado en Supabase.` 
+            };
+        }
+
+        if (!user) {
             return { success: false, error: 'Credenciales inválidas' };
         }
 
