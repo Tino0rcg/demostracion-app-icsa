@@ -1,13 +1,12 @@
 -- ==============================================================================
--- SCRIPT COMPLETO DE BASE DE DATOS SUPABASE - ESTUDIO ICSA
--- Incluye: Tablas, Relaciones, RLS, Permisos y Datos Semilla (Seed Data)
--- Listo para copiar y pegar directamente en el "SQL Editor" de Supabase
+-- SCRIPT DE BASE DE DATOS SUPABASE - ESTUDIO ICSA (VERSIÓN 100% IDEMPOTENTE)
+-- Tablas, Índices, Políticas RLS y Datos Semilla para Pruebas en Vivo
 -- ==============================================================================
 
 -- 1. EXTENSIONES
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. TABLAS PRINCIPALES
+-- 2. CREACIÓN DE TABLAS
 
 -- TABLA: USERS
 CREATE TABLE IF NOT EXISTS public.users (
@@ -71,7 +70,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
     updatedat TIMESTAMPTZ DEFAULT NOW()
 );
 
--- TABLA: ORDENES (Órdenes Activas)
+-- TABLA: ORDENES
 CREATE TABLE IF NOT EXISTS public.ordenes (
     id TEXT PRIMARY KEY,
     folio INTEGER,
@@ -122,12 +121,12 @@ CREATE TABLE IF NOT EXISTS public.ordenes (
     token_expiry TIMESTAMPTZ
 );
 
--- TABLA: HISTORIAL (Órdenes Finalizadas y Cierres)
+-- TABLA: HISTORIAL
 CREATE TABLE IF NOT EXISTS public.historial (
     LIKE public.ordenes INCLUDING ALL
 );
 
--- TABLA: HERRAMIENTAS (Inventario de Pañol y Terreno)
+-- TABLA: HERRAMIENTAS
 CREATE TABLE IF NOT EXISTS public.herramientas (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nombre TEXT NOT NULL,
@@ -146,7 +145,7 @@ CREATE TABLE IF NOT EXISTS public.herramientas (
     updatedat TIMESTAMPTZ DEFAULT NOW()
 );
 
--- TABLA: TOOL MOVEMENTS (Actas de Movimiento y Firmas)
+-- TABLA: TOOL MOVEMENTS
 CREATE TABLE IF NOT EXISTS public.tool_movements (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     toolid UUID REFERENCES public.herramientas(id) ON DELETE CASCADE,
@@ -161,7 +160,7 @@ CREATE TABLE IF NOT EXISTS public.tool_movements (
     signatureurl TEXT
 );
 
--- TABLA: HPT (Hoja de Planificación del Trabajo - Prevención)
+-- TABLA: HPT
 CREATE TABLE IF NOT EXISTS public.hpt (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     folio INTEGER,
@@ -186,7 +185,7 @@ CREATE TABLE IF NOT EXISTS public.hpt (
     updatedat TIMESTAMPTZ DEFAULT NOW()
 );
 
--- TABLA: HPT WORKERS (Firmas de Cuadrilla HPT)
+-- TABLA: HPT WORKERS
 CREATE TABLE IF NOT EXISTS public.hpt_workers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     hpt_id UUID REFERENCES public.hpt(id) ON DELETE CASCADE,
@@ -196,10 +195,10 @@ CREATE TABLE IF NOT EXISTS public.hpt_workers (
     firma TEXT
 );
 
--- TABLA: HPT QUESTIONS (Preguntas Dinámicas de Prevención de Riesgos)
+-- TABLA: HPT QUESTIONS
 CREATE TABLE IF NOT EXISTS public.hpt_questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    category TEXT NOT NULL, -- 'recursos', 'riesgos', 'medidas', 'epp'
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category TEXT NOT NULL,
     item_key TEXT NOT NULL,
     label TEXT NOT NULL,
     order_index INTEGER DEFAULT 0,
@@ -208,7 +207,7 @@ CREATE TABLE IF NOT EXISTS public.hpt_questions (
     UNIQUE(category, item_key)
 );
 
--- TABLA: CAPACITACIONES (Charlas de Seguridad de 5 Minutos)
+-- TABLA: CAPACITACIONES
 CREATE TABLE IF NOT EXISTS public.capacitaciones (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     folio INTEGER,
@@ -229,7 +228,7 @@ CREATE TABLE IF NOT EXISTS public.capacitaciones (
     updatedat TIMESTAMPTZ DEFAULT NOW()
 );
 
--- TABLA: CAPACITACION ASISTENTES (Asistencia a Charlas)
+-- TABLA: CAPACITACION ASISTENTES
 CREATE TABLE IF NOT EXISTS public.capacitacion_asistentes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     capacitacion_id UUID REFERENCES public.capacitaciones(id) ON DELETE CASCADE,
@@ -239,7 +238,7 @@ CREATE TABLE IF NOT EXISTS public.capacitacion_asistentes (
     firma TEXT
 );
 
--- 3. PERMISOS Y SEGURIDAD RLS
+-- 3. SEGURIDAD Y PERMISOS RLS
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.personnel ENABLE ROW LEVEL SECURITY;
@@ -254,46 +253,45 @@ ALTER TABLE public.hpt_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.capacitaciones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.capacitacion_asistentes ENABLE ROW LEVEL SECURITY;
 
--- Políticas de Acceso Completo (Lectura/Escritura) para la aplicación
-CREATE POLICY "Public Read Users" ON public.users FOR SELECT USING (true);
+-- Limpieza y creación de políticas RLS permisivas para la demo
+DROP POLICY IF EXISTS "Public All Users" ON public.users;
 CREATE POLICY "Public All Users" ON public.users FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Clients" ON public.clients FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Clients" ON public.clients;
 CREATE POLICY "Public All Clients" ON public.clients FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Personnel" ON public.personnel FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Personnel" ON public.personnel;
 CREATE POLICY "Public All Personnel" ON public.personnel FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Projects" ON public.projects FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Projects" ON public.projects;
 CREATE POLICY "Public All Projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Ordenes" ON public.ordenes FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Ordenes" ON public.ordenes;
 CREATE POLICY "Public All Ordenes" ON public.ordenes FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Historial" ON public.historial FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Historial" ON public.historial;
 CREATE POLICY "Public All Historial" ON public.historial FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Herramientas" ON public.herramientas FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Herramientas" ON public.herramientas;
 CREATE POLICY "Public All Herramientas" ON public.herramientas FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Tool Movements" ON public.tool_movements FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Tool Movements" ON public.tool_movements;
 CREATE POLICY "Public All Tool Movements" ON public.tool_movements FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read HPT" ON public.hpt FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All HPT" ON public.hpt;
 CREATE POLICY "Public All HPT" ON public.hpt FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read HPT Questions" ON public.hpt_questions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All HPT Questions" ON public.hpt_questions;
 CREATE POLICY "Public All HPT Questions" ON public.hpt_questions FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Capacitaciones" ON public.capacitaciones FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public All Capacitaciones" ON public.capacitaciones;
 CREATE POLICY "Public All Capacitaciones" ON public.capacitaciones FOR ALL USING (true) WITH CHECK (true);
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
 
 -- ==============================================================================
--- 4. DATOS SEMILLA (SEED DATA)
--- Carga inicial de usuarios, clientes, cuadrillas, herramientas y órdenes reales
+-- 4. CARGA DE DATOS SEMILLA (INSERTS INDEPENDIENTES)
 -- ==============================================================================
 
 -- A. USUARIOS
@@ -326,7 +324,7 @@ INSERT INTO public.projects (id, name, status, clientid, clientname, startdate, 
 ('p0000000-0000-0000-0000-000000000004', 'Monitoreo Sísmico y Fibras Subterráneas Mina Subterránea', 'active', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '2026-01-10T08:00:00Z', '2026-02-28T18:00:00Z', '["Carlos Muñoz (Supervisor)"]'::JSONB, 'Cierre y certificación técnica del anillo óptico de seguridad interior mina.')
 ON CONFLICT (id) DO NOTHING;
 
--- E. INVENTARIO DE HERRAMIENTAS DE ALTO COSTO
+-- E. INVENTARIO DE HERRAMIENTAS
 INSERT INTO public.herramientas (id, nombre, marca, modelo, serie, codigointerno, categoria, estado, asignadoa, imageurl, descripcion, notas) VALUES
 ('h0000000-0000-0000-0000-000000000001', 'Fusionadora de Fibra Óptica 90S+', 'Fujikura', '90S+ Core Alignment', 'FUS-90S-8921', 'FUS-001', 'Instrumental Óptico', 'En Terreno', 'Carlos Muñoz', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80', 'Alineación por núcleo en 4 ejes con calibración de arco en tiempo real y tiempo de fusión de 7 segundos.', 'Retirada con firma digital para faena Minera Centinela.'),
 ('h0000000-0000-0000-0000-000000000002', 'Certificador OTDR OptiFiber Pro', 'Fluke Networks', 'OFP-100-M/S', 'FLK-OTDR-4512', 'OTDR-002', 'Certificación', 'Disponible', NULL, 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80', 'Reflectómetro óptico monomodo/multimodo con mapeo de eventos EventMap y zona muerta ultra corta de 0.5 m.', 'Calibración al día (vigente hasta Dic 2026).'),
@@ -351,7 +349,7 @@ INSERT INTO public.ordenes (id, folio, projectid, clientid, clientname, clientru
 ('ot-1044', 1044, 'p0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000003', 'Movistar Empresas SpA', '76.123.456-7', '+56 2 2690 4000', 'soporte.b2b@movistar.cl', 'Edificio Corporativo Piso 12', 'Plaza Baquedano 44', 'Pendiente', 'Tendido de canaleta perimetral y peinado de 48 enlaces Cat 6A en rack de telecomunicaciones.', 'Cableado Estructurado', 'Carlos Muñoz', '15.432.876-1', '2026-03-12T08:30:00Z', false, true)
 ON CONFLICT (id) DO NOTHING;
 
--- H. HISTORIAL DE ÓRDENES CERRADAS (Para Generación de Actas PDF)
+-- H. HISTORIAL DE ÓRDENES CERRADAS
 INSERT INTO public.historial (id, folio, projectid, clientid, clientname, clientrut, clientphone, clientemail, branch, address, status, description, tipotrabajo, techname, techrut, startdate, iscert, islabeled, isprojectsummary) VALUES
 ('ot-1039', 1039, 'p0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000004', 'Codelco División Andina', '61.704.000-K', '+56 34 249 2000', 'contratos.telecom@codelco.cl', 'Túnel Interior Mina Nivel 3', 'Camino Internacional s/n', 'Completado', 'Acta Final de Entrega: Empalme y certificación de anillo óptico de monitoreo sísmico con 100% de reflectometrías aprobadas.', 'Certificación Óptica', 'Carlos Muñoz', '15.432.876-1', '2026-02-20T08:00:00Z', true, true, true),
 ('ot-1040', 1040, 'p0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000002', 'Entel Infraestructura Chile', '96.806.000-4', '+56 2 2360 0123', 'redes.terreno@entel.cl', 'Estación Base Providencia', 'Av. Andrés Bello 2100', 'Completado', 'Reemplazo de latiguillos monomodo y limpieza de conectores con microscopio digital.', 'Mantenimiento Preventivo', 'Ramiro Contreras', '16.890.123-4', '2026-02-26T10:00:00Z', true, true, false)
@@ -364,8 +362,10 @@ INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('recursos', 'materiales', '¿Se dispone de los materiales, repuestos e insumos necesarios?', 3),
 ('recursos', 'coordinacionC', '¿Se realizó coordinaciones necesarias con cliente para acceder a las zonas de trabajo?', 4),
 ('recursos', 'bloqueo', '¿Se coordinó bloqueo de seguridad y/o líneas (Eléctricas, Hidráulicas, etc.)?', 5),
-('recursos', 'permisoC', '¿Se solicitó el permiso de ingreso al personal de prevención de riesgos cliente?', 6),
+('recursos', 'permisoC', '¿Se solicitó el permiso de ingreso al personal de prevención de riesgos cliente?', 6)
+ON CONFLICT (category, item_key) DO NOTHING;
 
+INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('riesgos', 'aprisionamiento', 'Aprisionamiento por tableros, máquinas o equipos en movimiento.', 1),
 ('riesgos', 'atrapamiento', 'Atrapamiento de extremidades por objetos o canalizaciones.', 2),
 ('riesgos', 'caidaMismo', 'Caída al mismo nivel por superficies irregulares, agua o cables sueltos.', 3),
@@ -375,16 +375,20 @@ INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('riesgos', 'golpeadoC', 'Golpeado con o contra herramientas, perfiles o estructuras metálicas.', 7),
 ('riesgos', 'atropellado', 'Atropellado por maquinaria pesada, camionetas o grúas horquilla.', 8),
 ('riesgos', 'sobreesfuerzo', 'Sobreesfuerzo por levantamiento manual de cargas pesadas (> 25 kg).', 9),
-('riesgos', 'incendioE', 'Riesgo de amago de incendio, chispas o deflagración eléctrica.', 10),
+('riesgos', 'incendioE', 'Riesgo de amago de incendio, chispas o deflagración eléctrica.', 10)
+ON CONFLICT (category, item_key) DO NOTHING;
 
+INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('medidas', 'limpiesa', 'El área de trabajo está limpia, ordenada y con accesos expeditos.', 1),
 ('medidas', 'iluminacion', 'El área dispone de la iluminación requerida para la tarea a realizar.', 2),
 ('medidas', 'electricas', 'Las instalaciones y alargadores eléctricos portátiles están en buen estado.', 3),
 ('medidas', 'delimitada', 'Está delimitada la zona de trabajo con conos y cinta de peligro.', 4),
 ('medidas', 'eppAdecuado', 'Se verifica la utilización de los EPP adecuados y en buen estado de conservación.', 5),
 ('medidas', 'arnes', 'Se utiliza arnés de seguridad con doble cabo de vida sobre 1.5 m de altura.', 6),
-('medidas', 'extintor', 'Se dispone de extintor PQS de 6 o 10 kg operativo y vigente en el área.', 7),
+('medidas', 'extintor', 'Se dispone de extintor PQS de 6 o 10 kg operativo y vigente en el área.', 7)
+ON CONFLICT (category, item_key) DO NOTHING;
 
+INSERT INTO public.hpt_questions (category, item_key, label, order_index) VALUES
 ('epp', 'casco', 'Casco de Seguridad con Barbiquejo', 1),
 ('epp', 'lentes', 'Lentes de Seguridad con Filtro UV', 2),
 ('epp', 'calzado', 'Calzado de Seguridad Dieléctrico', 3),
