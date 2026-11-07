@@ -14,6 +14,7 @@ import { ArrowLeft, Save, ShieldCheck, KeyRound, Loader2, RefreshCw, AlertTriang
 import Link from "next/link";
 import { useUser, useUserProfile } from "@/lib/auth-provider";
 import { getPersonnelById, updatePersonnel, changeUserPassword } from "@/actions/db-actions";
+import { autoDemoLogin } from "@/actions/auth-actions";
 import { useActionData } from "@/hooks/use-action-data";
 import { validateRut, formatRut } from "@/lib/rut-utils";
 import { cn } from "@/lib/utils";
@@ -84,15 +85,10 @@ export default function EditTechnician({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     if (!isUserLoading) {
       if (!user) {
-        router.push("/login");
-      } else {
-        const role = user.role?.toLowerCase();
-        if (role !== 'admin' && role !== 'administrador') {
-          router.replace("/dashboard");
-        }
+        autoDemoLogin("admin");
       }
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

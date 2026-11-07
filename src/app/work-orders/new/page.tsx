@@ -17,7 +17,7 @@ import { ArrowLeft, Search, User, MapPin, Building2, Hash, PlusCircle, CheckCirc
 import Link from "next/link";
 import { useUser, useUserProfile } from "@/lib/auth-provider";
 import { getClients, getPersonnel, getActiveProjects, saveWorkOrderAndStatus, getNextFolio } from "@/actions/db-actions";
-import { updateUserSignature } from "@/actions/auth-actions";
+import { updateUserSignature, autoDemoLogin } from "@/actions/auth-actions";
 import { useActionData } from "@/hooks/use-action-data";
 import { v4 as uuidv4 } from "uuid";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -109,8 +109,10 @@ function NewWorkOrderContent() {
   }, []);
 
   useEffect(() => {
-    if (!isUserLoading && !user) router.push("/login");
-  }, [user, isUserLoading, router]);
+    if (!isUserLoading && !user) {
+      autoDemoLogin("admin");
+    }
+  }, [user, isUserLoading]);
 
   useEffect(() => {
     if (userProfile?.nombre_t && user && formData.teamIds.length === 0) {

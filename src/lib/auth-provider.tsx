@@ -11,10 +11,18 @@ interface UserAuthState {
 
 export const AuthContext = createContext<UserAuthState | undefined>(undefined);
 
+const DEFAULT_DEMO_USER = {
+    uid: 'usr-admin-demo',
+    email: 'admin@icsa.cl',
+    name: 'Administrador General (Demo)',
+    role: 'Administrador',
+    rut: '11.111.111-1'
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [authState, setAuthState] = useState<UserAuthState>({
-        user: null,
-        isUserLoading: true,
+        user: DEFAULT_DEMO_USER,
+        isUserLoading: false,
         userError: null
     });
 
@@ -22,15 +30,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         let mounted = true;
         getSession().then((session) => {
             if (mounted) {
+                const activeUser = session && session.uid ? { uid: session.uid, email: session.email, ...session } : DEFAULT_DEMO_USER;
                 setAuthState({
-                    user: session ? { uid: session.uid, email: session.email, ...session } : null,
+                    user: activeUser,
                     isUserLoading: false,
                     userError: null
                 });
             }
-        }).catch((err) => {
+        }).catch(() => {
             if (mounted) {
-                setAuthState({ user: null, isUserLoading: false, userError: err });
+                setAuthState({ user: DEFAULT_DEMO_USER, isUserLoading: false, userError: null });
             }
         });
         return () => { mounted = false; };

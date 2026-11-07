@@ -13,6 +13,7 @@ import { getCapacitaciones, getCapacitacionById, hideCapacitacion } from "@/acti
 import { useActionData } from "@/hooks/use-action-data";
 import { generateCharlaPDF } from "@/lib/pdf-generator";
 import { useToast } from "@/hooks/use-toast";
+import { autoDemoLogin } from "@/actions/auth-actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,8 +44,10 @@ export default function CharlasListPage() {
   }, [user?.uid, isAdmin, isPrevencionista, isProfileLoading]);
 
   useEffect(() => {
-    if (!isUserLoading && !user) router.push("/login");
-  }, [user, isUserLoading, router]);
+    if (!isUserLoading && !user) {
+      autoDemoLogin("admin");
+    }
+  }, [user, isUserLoading]);
 
   const filteredCaps = (capacitaciones || []).filter(cap => 
     cap.supervisorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

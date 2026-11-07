@@ -13,6 +13,7 @@ import { getHPTs, getHPTById, getHPTQuestions, hideHPT } from "@/actions/db-acti
 import { useActionData } from "@/hooks/use-action-data";
 import { generateHPTPDF } from "@/lib/pdf-generator";
 import { useToast } from "@/hooks/use-toast";
+import { autoDemoLogin } from "@/actions/auth-actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,8 +44,10 @@ export default function HPTListPage() {
   }, [user?.uid, isAdmin, isPrevencionista, isProfileLoading]);
 
   useEffect(() => {
-    if (!isUserLoading && !user) router.push("/login");
-  }, [user, isUserLoading, router]);
+    if (!isUserLoading && !user) {
+      autoDemoLogin("admin");
+    }
+  }, [user, isUserLoading]);
 
   const filteredHPTs = (hpts || []).filter(hpt => 
     hpt.supervisorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||

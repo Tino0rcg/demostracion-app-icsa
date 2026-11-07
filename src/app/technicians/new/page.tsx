@@ -13,6 +13,7 @@ import { ArrowLeft, Save, ShieldCheck, KeyRound, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/lib/auth-provider";
 import { createPersonnelAccount } from "@/actions/db-actions";
+import { autoDemoLogin } from "@/actions/auth-actions";
 import { v4 as uuidv4 } from "uuid";
 import { validateRut, formatRut } from "@/lib/rut-utils";
 
@@ -36,15 +37,10 @@ export default function NewTechnician() {
   useEffect(() => {
     if (!isUserLoading) {
       if (!user) {
-        router.push("/login");
-      } else {
-        const role = user.role?.toLowerCase();
-        if (role !== 'admin' && role !== 'administrador') {
-          router.replace("/dashboard");
-        }
+        autoDemoLogin("admin");
       }
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

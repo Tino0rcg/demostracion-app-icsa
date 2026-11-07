@@ -13,6 +13,7 @@ import { ArrowLeft, Save, User, Building, MapPin, Phone, Mail, BadgeCheck, Hash,
 import Link from "next/link";
 import { useUser } from "@/lib/auth-provider";
 import { getClientById, updateClient } from "@/actions/db-actions";
+import { autoDemoLogin } from "@/actions/auth-actions";
 import { useActionData } from "@/hooks/use-action-data";
 import { validateRut, formatRut } from "@/lib/rut-utils";
 
@@ -56,15 +57,10 @@ export default function EditClient({ params }: { params: Promise<{ id: string }>
   useEffect(() => {
     if (!isUserLoading) {
       if (!user) {
-        router.push("/login");
-      } else {
-        const role = user.role?.toLowerCase();
-        if (role !== 'admin' && role !== 'administrador') {
-          router.replace("/dashboard");
-        }
+        autoDemoLogin("admin");
       }
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
