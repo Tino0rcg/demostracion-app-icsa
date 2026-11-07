@@ -183,50 +183,110 @@ export const DEMO_HISTORY_ORDERS = [
 export const DEMO_TOOLS = [
     {
         id: "tool-demo-1",
-        nombre: "Fusionadora de Fibra Óptica Fujikura 90S+",
+        nombre: "Fusionadora de Fibra Óptica 90S+",
+        marca: "Fujikura",
+        modelo: "90S+ Core Alignment",
+        serie: "FUS-90S-8921",
         codigoInterno: "FUS-001",
         categoria: "Instrumental Óptico",
         estado: "En Terreno",
         asignadoA: "Carlos Muñoz",
+        descripcion: "Alineación por núcleo en 4 ejes con calibración de arco en tiempo real y tiempo de fusión de 7 segundos.",
         imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
     },
     {
         id: "tool-demo-2",
-        nombre: "Certificador OTDR Fluke OptiFiber Pro",
+        nombre: "Certificador OTDR OptiFiber Pro",
+        marca: "Fluke Networks",
+        modelo: "OFP-100-M/S",
+        serie: "FLK-OTDR-4512",
         codigoInterno: "OTDR-002",
         categoria: "Certificación",
         estado: "Disponible",
         asignadoA: null,
+        descripcion: "Reflectómetro óptico monomodo/multimodo con mapeo de eventos EventMap y zona muerta ultra corta de 0.5 m.",
         imageUrl: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80"
     },
     {
         id: "tool-demo-3",
-        nombre: "Medidor de Potencia Óptica y Fuente Láser",
+        nombre: "Medidor de Potencia y Fuente Láser",
+        marca: "EXFO",
+        modelo: "MAX-720C",
+        serie: "EXF-PM-9021",
         codigoInterno: "OPM-003",
         categoria: "Medición",
         estado: "Disponible",
         asignadoA: null,
+        descripcion: "Medición de atenuación óptica en longitudes de onda 1310/1490/1550/1625 nm con registro interno.",
         imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
     },
     {
         id: "tool-demo-4",
-        nombre: "Cortadora de Precisión CT50 Fujikura",
+        nombre: "Cortadora de Precisión CT50",
+        marca: "Fujikura",
+        modelo: "CT50 High Precision",
+        serie: "CT50-3341",
         codigoInterno: "CLEAV-004",
         categoria: "Herramienta Manual",
         estado: "En Terreno",
         asignadoA: "Ramiro Contreras",
+        descripcion: "Cuchilla rotativa motorizada con conectividad Bluetooth para hasta 60.000 cortes en ángulo <0.5°.",
         imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
     },
     {
         id: "tool-demo-5",
-        nombre: "Taladro Percutor Inalámbrico DeWalt 20V Max",
+        nombre: "Taladro Percutor Inalámbrico 20V Max",
+        marca: "DeWalt",
+        modelo: "DCD996B XR Brushless",
+        serie: "DWT-20V-7811",
         codigoInterno: "TAL-005",
         categoria: "Herramienta Eléctrica",
         estado: "Disponible",
         asignadoA: null,
+        descripcion: "Motor sin carbones de 3 velocidades con mandril metálico nitrocarburado para fijaciones en hormigón.",
         imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-6",
+        nombre: "Escalera Dieléctrica Telescópica 24P",
+        marca: "Werner",
+        modelo: "D6224-2 Fibra de Vidrio",
+        serie: "ESC-WER-1120",
+        codigoInterno: "ESC-006",
+        categoria: "Seguridad en Altura",
+        estado: "En Terreno",
+        asignadoA: "Carlos Muñoz",
+        descripcion: "Escalera de fibra de vidrio no conductora de electricidad, capacidad de carga 136 kg para faenas en postes.",
+        imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-7",
+        nombre: "Generador Inverter Silencioso 2200W",
+        marca: "Honda",
+        modelo: "EU22i",
+        serie: "HND-GEN-9912",
+        codigoInterno: "GEN-007",
+        categoria: "Generación Eléctrica",
+        estado: "Disponible",
+        asignadoA: null,
+        descripcion: "Generador inverter de onda sinusoidal pura apto para instrumental electrónico delicado y fusión nocturna.",
+        imageUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+        id: "tool-demo-8",
+        nombre: "Identificador de Fibra Activa OFI",
+        marca: "Grandway",
+        modelo: "OFI-3 Optical Traffic",
+        serie: "GRD-OFI-6644",
+        codigoInterno: "OFI-008",
+        categoria: "Instrumental Óptico",
+        estado: "Disponible",
+        asignadoA: null,
+        descripcion: "Detección no destructiva de señales ópticas moduladas de 270Hz, 1kHz y 2kHz en fibras vivas.",
+        imageUrl: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=600&q=80"
     }
 ];
+
 
 export const DEMO_CLIENTS = [
     { id: "cli-1", nombreCliente: "ICSA Ingeniería & Minería", rutCliente: "76.543.210-K", emailClientes: "contacto@icsa.cl", direccionCliente: "Av. Providencia 1208, Santiago" },
