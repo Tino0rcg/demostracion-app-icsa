@@ -9,10 +9,10 @@ export async function pingAction() {
 
 export async function checkSysHealth() {
     return {
-        supabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-        supabaseKey: !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+        supabaseUrl: !!(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL),
+        supabaseKey: !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
         nodeEnv: process.env.NODE_ENV,
-        urlPrefix: process.env.NEXT_PUBLIC_SUPABASE_URL ? process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 15) : 'NONE'
+        urlPrefix: (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) ? (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!.substring(0, 15) : 'NONE'
     };
 }
 

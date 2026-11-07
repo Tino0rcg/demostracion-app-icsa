@@ -4,15 +4,17 @@ import { localSupabase } from './local-db';
 
 // Creamos una función interna para obtener el cliente, validando las variables
 function createSupabaseClient() {
-  const useLocal = process.env.USE_LOCAL_DB === 'true' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const useLocal = process.env.USE_LOCAL_DB === 'true' || !url;
 
   if (useLocal) {
     console.log("[DB_ROUTER] Operando en MODO LOCAL (Base de datos persistente en disco data/local-db.json)");
     return localSupabase;
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || 
+              process.env.SUPABASE_KEY ||
+              process.env.SUPABASE_PUBLISHABLE_KEY ||
               process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 
               process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
