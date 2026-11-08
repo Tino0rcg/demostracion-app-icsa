@@ -233,19 +233,22 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         {
           element: "#tour-btn-new-ot",
           popover: {
-            title: "📋 Paso 6: ¿Cómo se Crea una OT en Terreno? (Paso a Paso)",
+            title: "📋 Paso 6: Emisión de la OT en Terreno (Desglose Completo)",
             description: `
               <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fae8ff; color: #86198f; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 4 de 6 • Emisión Técnica en Faena</span>
-                <p>Al presionar <strong>+ Nueva Orden de Trabajo</strong>, el supervisor en terreno completa el formulario técnico optimizado para celular/tablet:</p>
+                <span style="display:inline-block; width: fit-content; padding: 2px 10px; border-radius: 9999px; background: #fae8ff; color: #86198f; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fase 4 de 6 • Cómo se Lanza una OT en Faena</span>
+                <p>Al pulsar <strong>+ Nueva Orden</strong>, el supervisor en terreno abre el formulario técnico optimizado para tablet/celular con todas las secciones de faena:</p>
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
-                  <div><strong>1. Selección de Mandante y Obra:</strong> Se elige el cliente (ej: <em>ICSA Minería</em>) y el proyecto activo. El sistema autocompleta RUT, teléfono, contacto y dirección de faena.</div>
-                  <div><strong>2. Especificación Técnica:</strong> Se define la labor (<em>Fusión Fibra Óptica</em>, <em>Certificación OTDR</em> o <em>Cableado Cat 6A</em>) y se cuantifican mufas e hilos intervenidos.</div>
-                  <div><strong>3. Asignación de Cuadrilla:</strong> Se asigna el técnico responsable y su ayudante de terreno.</div>
+                  <div><strong>1. Mandante & Faena:</strong> Selección de cliente (ej: <em>ICSA Minería - Codelco Centinela</em>), folio automático, contacto y ubicación exacta (<em>Edificio Concentradora - Racks Piso 2</em>).</div>
+                  <div><strong>2. Especificación Técnica:</strong> Se define la labor (<em>Fusión Fibra Monomodo</em>) y se cuantifican <em>48 fusiones ODF</em>, <em>24 puntos Cat 6A</em> y mediciones con atenuación &lt; 0.02 dB.</div>
+                  <div><strong>3. Cuadrilla en Terreno:</strong> Asignación del técnico a cargo y acompañantes autorizados para control de horas.</div>
+                  <div><strong>4. Respaldo Fotográfico:</strong> Fotos del empalme y reflectometría OTDR comprimidas para subida rápida en redes 3G.</div>
+                  <div><strong>5. Doble Firma Digital:</strong> Firma en pantalla táctil del técnico y firma presencial del cliente (o envío de enlace seguro remoto).</div>
                 </div>
-                <div style="display: flex; gap: 6px; align-items: center; justify-content: space-between; margin-top: 4px;">
-                  <span style="font-size: 11px; color: #64748b;">⏱️ Tiempo de llenado: <strong>&lt; 2 minutos</strong></span>
-                  <a href="/work-orders/new" target="_blank" style="display: inline-block; background: #0d9488; color: white; padding: 4px 10px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 11px;">Abrir Formulario en Vivo ↗</a>
+                <div style="margin-top: 4px;">
+                  <a href="/work-orders/new?demo=true" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: linear-gradient(135deg, #0d9488 0%, #059669 100%); color: white; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 12px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);">
+                    📝 Abrir Formulario Real Pre-llenado con Datos Demo ↗
+                  </a>
                 </div>
               </div>
             `,

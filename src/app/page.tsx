@@ -35,7 +35,7 @@ export default function Home() {
                 Iniciar Sesión
               </Button>
             </Link>
-            <Link href="/login?tour=true">
+            <Link href="/dashboard?tour=true&step=1">
               <Button variant="default" className="bg-primary hover:bg-primary/90 font-black px-6 h-11 text-base shadow-lg transition-all hover:scale-105 rounded-xl gap-2">
                 🚀 Iniciar Tour
               </Button>
@@ -66,7 +66,7 @@ export default function Home() {
                 Plataforma de gestión operativa para ICSA. Digitaliza tus formularios, captura firmas y optimiza el flujo técnico.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-                <Link href="/login?tour=true">
+                <Link href="/dashboard?tour=true&step=1">
                   <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-14 text-base shadow-xl shadow-primary/25 rounded-2xl transition-all hover:scale-105 cursor-pointer gap-2">
                     🚀 Iniciar Tour Guiado (Demo en Vivo)
                   </Button>

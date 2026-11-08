@@ -75,10 +75,7 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("tour") === "true") {
-        const timer = setTimeout(() => {
-          startLoginTour();
-        }, 400);
-        return () => clearTimeout(timer);
+        handleQuickDemo("admin");
       }
     }
   }, []);

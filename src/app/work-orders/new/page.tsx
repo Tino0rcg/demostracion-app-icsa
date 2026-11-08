@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SignaturePad } from "@/components/SignaturePad";
 import { PhotoUpload } from "@/components/PhotoUpload";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search, User, MapPin, Building2, Hash, PlusCircle, CheckCircle2, Circle, X, Users, Briefcase, Phone, Mail, Loader2, Save, Archive, Send, Trash2, Camera } from "lucide-react";
+import { ArrowLeft, Search, User, MapPin, Building2, Hash, PlusCircle, CheckCircle2, Circle, X, Users, Briefcase, Phone, Mail, Loader2, Save, Archive, Send, Trash2, Camera, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useUser, useUserProfile } from "@/lib/auth-provider";
 import { getClients, getPersonnel, getActiveProjects, saveWorkOrderAndStatus, getNextFolio } from "@/actions/db-actions";
@@ -113,6 +113,56 @@ function NewWorkOrderContent() {
       autoDemoLogin("admin");
     }
   }, [user, isUserLoading]);
+
+  const handleFillDemoData = () => {
+    setFormData(prev => ({
+      ...prev,
+      clientName: "ICSA Minería - Codelco División Centinela",
+      clientRut: "76.432.198-5",
+      clientPhone: "+56 9 8452 1190",
+      clientEmail: "operaciones.centinela@icsa.cl",
+      branch: "Faena Centinela",
+      address: "Camino a Faena Km 42, Sierra Gorda, Región de Antofagasta",
+      interventionAddress: "Edificio Concentradora - Sala de Control de Racks, Piso 2",
+      building: "Edificio Concentradora",
+      floor: "Piso 2 - Sala Racks R-04",
+      tipoTrabajo: "Fusión Fibra Óptica & Certificación OTDR",
+      detalleTecnico: [
+        { elemento: "Puntos de red instalados", cantidad: "24", observacion: "Cat 6A LSZH certificados con Fluke DSX-8000" },
+        { elemento: "Puntos certificados", cantidad: "24", observacion: "Pass 100% bajo estándar ANSI/TIA-568" },
+        { elemento: "User cord", cantidad: "24", observacion: "Patch cords 2m Cat 6A color azul" },
+        { elemento: "Patch cord instalados", cantidad: "24", observacion: "Conectores LC-LC Dúplex Monomodo" },
+        { elemento: "Equipos configurados", cantidad: "2", observacion: "Switches Industriales Cisco Catalyst IE-3400" },
+        { elemento: "Otros trabajos realizados", cantidad: "48", observacion: "Fusiones de fibra óptica en bandeja ODF 1U" }
+      ],
+      puntosRed: [
+        { punto: "P-01 al P-12", patchPanel: "PP-ODF-01", rack: "Rack 04", switch: "SW-CORP-01", puerto: "Puertos 1-12", certificacion: "Aprobado (0.02 dB)" },
+        { punto: "P-13 al P-24", patchPanel: "PP-ODF-01", rack: "Rack 04", switch: "SW-CORP-01", puerto: "Puertos 13-24", certificacion: "Aprobado (0.03 dB)" }
+      ],
+      observacionesGenerales: "Faena ejecutada según protocolo de seguridad HPT y charla de 5 minutos. Enlaces de fibra monomodo fusionados con máquina Fujikura 90S+. Atenuación media obtenida 0.02 dB por fusión, sin pérdidas anómalas.",
+      estadoTrabajo: "Trabajo finalizado correctamente",
+      description: "Empalme de cable troncal de 48 hilos monomodo en sala de control y habilitación de 24 enlaces de datos para PLC y cámaras de seguridad.",
+      techName: "Carlos Mendoza Silva",
+      techRut: "15.342.119-4",
+      clientReceiverName: "Eduardo Valenzuela Gómez",
+      clientReceiverRut: "12.876.543-K",
+      clientReceiverEmail: "evalenzuela@codelco.cl",
+      condicionesCobro: ["Cobro Normal", "Horas Extra Faena Aprobadas", "Certificación Digital Incluida"]
+    }));
+    toast({
+      title: "⚡ Datos de Terreno Cargados",
+      description: "Se autocompletaron todos los campos técnicos, cuadrilla y especificaciones de faena minera."
+    });
+  };
+
+  useEffect(() => {
+    if (searchParams.get("demo") === "true" || searchParams.get("tour") === "true") {
+      const timer = setTimeout(() => {
+        handleFillDemoData();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (userProfile?.nombre_t && user && formData.teamIds.length === 0) {
@@ -283,8 +333,8 @@ function NewWorkOrderContent() {
       <header className="bg-primary text-white backdrop-blur-2xl border-b border-white/10 sticky top-0 z-40 shadow-lg">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-4xl">
           <div className="flex items-center gap-2">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-white">
+            <Link href="/dashboard?tour=true&step=6">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10 text-white" title="Volver al Dashboard">
                 <ArrowLeft className="h-6 w-6" />
               </Button>
             </Link>
@@ -295,6 +345,14 @@ function NewWorkOrderContent() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              onClick={handleFillDemoData}
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs gap-1.5 shadow-md rounded-xl h-9 px-3 transition-all hover:scale-105 active:scale-95"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">⚡ Datos Demo</span>
+            </Button>
             <Button
               type="button"
               variant="ghost"
@@ -312,6 +370,14 @@ function NewWorkOrderContent() {
       {/* Sticky Bottom Actions for Mobile */}
       <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 animate-slide-up" style={{ animationDelay: '300ms' }}>
         <div className="glassmorphism p-2 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex gap-2 items-center">
+          <Button
+            type="button"
+            onClick={handleFillDemoData}
+            variant="ghost"
+            className="h-12 px-3 rounded-full font-black uppercase text-[10px] tracking-widest text-amber-600 hover:bg-amber-50"
+          >
+            <Sparkles size={16} />
+          </Button>
           <Button
             type="button"
             onClick={onSaveAsPending}
@@ -334,6 +400,40 @@ function NewWorkOrderContent() {
       </div>
 
       <main className="container mx-auto px-4 mt-6 max-w-3xl space-y-6">
+        {/* Banner de Modo Demostración de OT */}
+        <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/15 to-teal-500/10 border border-teal-500/30 rounded-2xl p-4 shadow-sm space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2.5 py-1 bg-teal-600 text-white rounded-lg text-xs font-black uppercase tracking-wider">Fase 4 de 6</span>
+              <div>
+                <h2 className="text-sm font-black text-slate-800">Formulario Oficial de Emisión de OT en Terreno</h2>
+                <p className="text-xs text-slate-600">Explora todos los campos reales: Especificación de fibra, cuantificación de puntos, cuadrilla y doble firma.</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleFillDemoData}
+                className="flex-1 sm:flex-none bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl h-9 px-4 gap-1.5 shadow-md transition-all active:scale-95"
+              >
+                <Sparkles size={14} />
+                <span>⚡ Auto-llenar Datos</span>
+              </Button>
+              <Link href="/dashboard?tour=true&step=6">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="text-xs font-bold rounded-xl h-9 px-3 border-teal-500/40 text-teal-800 hover:bg-teal-50"
+                >
+                  ← Volver al Tour
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         <form className="space-y-6">
           <Card className="shadow-[0_15px_50px_rgba(0,0,0,0.04)] border-none bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden relative animate-slide-up">
             <CardHeader className="bg-transparent border-b border-black/5 p-6">
