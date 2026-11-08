@@ -86,7 +86,7 @@ Object.entries(KEY_MAPPING).forEach(([db, fe]) => {
 });
 
 // Realistic demo fallback datasets for live portfolio demonstrations
-export const DEMO_PROJECTS = [
+const DEMO_PROJECTS = [
     {
         id: "proj-demo-1",
         name: "Instalación & Certificación Fibra Óptica - Planta Norte",
@@ -119,7 +119,7 @@ export const DEMO_PROJECTS = [
     }
 ];
 
-export const DEMO_ORDERS = [
+const DEMO_ORDERS = [
     {
         id: "ot-demo-1",
         folio: 1042,
@@ -155,7 +155,7 @@ export const DEMO_ORDERS = [
     }
 ];
 
-export const DEMO_HISTORY_ORDERS = [
+const DEMO_HISTORY_ORDERS = [
     {
         id: "ot-demo-hist-1",
         folio: 1039,
@@ -180,7 +180,7 @@ export const DEMO_HISTORY_ORDERS = [
     }
 ];
 
-export const DEMO_TOOLS = [
+const DEMO_TOOLS = [
     {
         id: "tool-demo-1",
         nombre: "Fusionadora de Fibra Óptica 90S+",
@@ -288,7 +288,7 @@ export const DEMO_TOOLS = [
 ];
 
 
-export const DEMO_CLIENTS = [
+const DEMO_CLIENTS = [
     { id: "cli-1", nombreCliente: "ICSA Ingeniería & Minería", rutCliente: "76.543.210-K", emailClientes: "contacto@icsa.cl", direccionCliente: "Av. Providencia 1208, Santiago" },
     { id: "cli-2", nombreCliente: "Entel Infraestructura Chile", rutCliente: "96.806.000-4", emailClientes: "redes@entel.cl", direccionCliente: "Av. Costanera Sur 2760, Las Condes" },
     { id: "cli-3", nombreCliente: "Movistar Empresas SpA", rutCliente: "76.123.456-7", emailClientes: "b2b@movistar.cl", direccionCliente: "Plaza Baquedano 44, Providencia" }
@@ -336,7 +336,7 @@ function fromDbPayload(data: any | any[]): any {
     return result;
 }
 
-export const DEMO_PERSONNEL = [
+const DEMO_PERSONNEL = [
     { id: "usr-admin-demo", nombre_t: "Ramiro Contreras", rol_t: "Administrador", email: "admin@icsa.cl", rut_t: "11.111.111-1" },
     { id: "usr-sup-demo", nombre_t: "Carlos Muñoz", rol_t: "Supervisor", email: "supervisor@icsa.cl", rut_t: "22.222.222-2" },
     { id: "usr-tech-demo", nombre_t: "Juan Pablo Torres", rol_t: "Técnico", email: "jtorres@icsa.cl", rut_t: "33.333.333-3" }
