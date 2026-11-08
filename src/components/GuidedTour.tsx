@@ -5,6 +5,7 @@ import { driver, Driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface GuidedTourProps {
   onTabChange?: (tab: string) => void;
@@ -40,6 +41,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const driverRef = useRef<Driver | null>(null);
   const onTabChangeRef = useRef(onTabChange);
+  const { toast } = useToast();
 
   // Keep callback reference updated without triggering re-renders
   useEffect(() => {
@@ -773,13 +775,27 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         }
       ],
       onDestroyed: () => {
-        onTabChangeRef.current?.("dashboard");
+        // Ensure complete DOM cleanup of any Driver.js artifacts
+        if (typeof document !== "undefined") {
+          document.querySelectorAll('.driver-overlay, .driver-popover, .driver-active-element, svg.driver-overlay').forEach(el => {
+            try { el.remove(); } catch {}
+          });
+          document.body.style.overflow = '';
+          document.body.style.pointerEvents = '';
+        }
+
         if (typeof window !== "undefined") {
+          sessionStorage.setItem("icsa_tour_seen", "true");
           const url = new URL(window.location.href);
           url.searchParams.delete("tour");
           url.searchParams.delete("step");
           window.history.replaceState(null, "", url.toString());
         }
+
+        toast({
+          title: "✨ Operación Normal Activada",
+          description: "Tour finalizado. Ahora puedes explorar, crear proyectos, emitir órdenes de trabajo y operar la plataforma con total libertad."
+        });
       }
     });
 
