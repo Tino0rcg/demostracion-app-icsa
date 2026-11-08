@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Sparkles, ChevronLeft, ChevronRight, X, ExternalLink, CheckCircle2, Shield, Wrench, Briefcase, ClipboardList, FileText, ArrowRight } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Sparkles, ChevronLeft, ChevronRight, X, ExternalLink, CheckCircle2, Shield, Wrench, Briefcase, ClipboardList, FileText, ArrowRight, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,9 +17,8 @@ interface TourStep {
   title: string;
   elementId?: string;
   tab: string;
-  description: string;
-  bullets?: string[];
-  note?: string;
+  actionText: string;
+  detail: string;
   isOtShowcase?: boolean;
 }
 
@@ -27,221 +26,186 @@ const STEPS: TourStep[] = [
   // PASO 1
   {
     id: "step-1",
-    badge: "Acceso al Sistema",
+    badge: "Inicio • Rol Administrador",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
-    title: "Paso 1 de 16: Autenticación & Perfiles de Faena",
+    title: "1. Panel de Bienvenida y Roles",
     elementId: "tour-welcome",
     tab: "dashboard",
-    description: "La plataforma cuenta con segregación estricta de funciones según el perfil de cada colaborador en faena y oficina:",
-    bullets: [
-      "Administrador General: Control total de contratos, clientes, cuadrillas, pañol y auditorías legales.",
-      "Supervisor Técnico: Despacho de OTs, control de cuadrillas y firmas en terreno.",
-      "Prevencionista de Riesgos: Checklists HPT y charlas diarias de 5 minutos obligatorias."
-    ],
-    note: "💡 Modo Activo: Estás navegando como Administrador General con permisos totales para conocer todas las funciones sin restricciones."
+    actionText: "👆 Observa tu perfil en la cabecera",
+    detail: "Estás conectado como Administrador General con permisos totales sobre faenas, clientes, técnicos y pañol."
   },
   // PASO 2
   {
     id: "step-2",
-    badge: "Estado Operativo en Tiempo Real",
+    badge: "Supervisión en Vivo",
     badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    title: "Paso 2 de 16: Centro de Monitoreo & KPIs Operativos",
+    title: "2. Centro de Control & KPIs",
     elementId: "tour-stats-grid",
     tab: "dashboard",
-    description: "Al iniciar la jornada, la jefatura y supervisores supervisan el balance operacional consolidado:",
-    bullets: [
-      "Proyectos en Ejecución: Contratos de telecomunicaciones y minería en curso.",
-      "Órdenes Pendientes: Trabajos que las cuadrillas tienen asignados en terreno hoy.",
-      "Stock en Pañol: Equipos disponibles en bodega vs. entregados bajo firma digital."
-    ]
+    actionText: "👆 Revisa el balance diario de faena",
+    detail: "Muestra cuántos proyectos están en ejecución, las órdenes que las cuadrillas tienen asignadas hoy y el instrumental en terreno."
   },
   // PASO 3
   {
     id: "step-3",
-    badge: "Resumen de Contratos",
+    badge: "Contratos de Faena",
     badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
-    title: "Paso 3 de 16: Panel Rápido de Obras en Ejecución",
+    title: "3. Obras Prioritarias",
     elementId: "tour-card-projects",
     tab: "dashboard",
-    description: "Muestra los 5 contratos prioritarios en faena con cliente mandante, plazos contractuales y acceso directo a cada obra."
+    actionText: "👉 Pulsa sobre esta tarjeta para ver proyectos",
+    detail: "Muestra los 5 contratos principales (Codelco, Entel) con fechas contractuales y porcentaje de avance."
   },
   // PASO 4
   {
     id: "step-4",
-    badge: "Cola de Cuadrillas",
+    badge: "Cola de Terreno",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    title: "Paso 4 de 16: Cola de Órdenes Pendientes",
+    title: "4. Órdenes de Trabajo de Hoy",
     elementId: "tour-card-orders",
     tab: "dashboard",
-    description: "Supervisión en vivo de las OTs que los técnicos tienen asignadas hoy, con folio único correlativo inmutable, técnico a cargo y estado de ejecución."
+    actionText: "👉 Pulsa sobre esta tarjeta para ver OTs",
+    detail: "Supervisa en tiempo real qué órdenes están asignadas hoy con folio único, técnico a cargo y estado."
   },
   // PASO 5
   {
     id: "step-5",
-    badge: "Fase 1 • Planificación de Faena",
+    badge: "Fase 1 • Planificación",
     badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
-    title: "Paso 5 de 16: Fase 1 • Gestión de Proyectos de Infraestructura",
+    title: "5. Pestaña de Proyectos Activos",
     elementId: "tour-projects-container",
     tab: "projects",
-    description: "Toda labor técnica comienza con la apertura formal del proyecto de ingeniería:",
-    bullets: [
-      "Asignación de Personal: Supervisor a cargo y técnicos acreditados para ingresar a la faena minera.",
-      "Control Contractual: Monitoreo de fecha de inicio, fecha contractual de término e hitos de pago.",
-      "Historial por Mandante: Trazabilidad consolidada para Codelco, Entel, Movistar o ICSA Minería."
-    ]
+    actionText: "👉 Revisa el listado de contratos",
+    detail: "Aquí se registran las obras de ingeniería, asignando jefes de cuadrilla y acreditaciones para faena minera."
   },
   // PASO 6
   {
     id: "step-6",
-    badge: "Filtros en Tiempo Real",
+    badge: "Filtro Rápido",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
-    title: "Paso 6 de 16: Búsqueda Predictiva de Faenas",
+    title: "6. Buscador Predictivo de Faenas",
     elementId: "tour-projects-search",
     tab: "projects",
-    description: "En faenas con decenas de contratos simultáneos, el buscador filtra en milisegundos por nombre de obra, cliente mandante o RUT comercial."
+    actionText: "👉 Escribe aquí para buscar obras",
+    detail: "Filtra en milisegundos por nombre de proyecto (ej. 'Centinela'), cliente mandante o RUT comercial."
   },
   // PASO 7
   {
     id: "step-7",
-    badge: "Función Estrella • Cierre y Cobro",
+    badge: "Función Estrella • Cobro",
     badgeColor: "bg-purple-100 text-purple-800 border-purple-200",
-    title: "Paso 7 de 16: Acta Consolidada de Liquidación de Proyecto",
+    title: "7. Botón '+ Nuevo Proyecto' & Acta Final",
     elementId: "tour-btn-new-project",
     tab: "projects",
-    description: "Al finalizar una obra de semanas o meses, el sistema cuenta con el motor de Acta Final Consolidada:",
-    bullets: [
-      "Agrupación Automática: Reúne todas las OTs y visitas técnicas ejecutadas en ese proyecto.",
-      "Resumen de Materiales: Totaliza metros de fibra, bocas de red y fusiones realizadas.",
-      "Acta Única en PDF: Genera el documento de liquidación legal firmado para cobro inmediato sin disputas con el mandante."
-    ]
+    actionText: "👉 Haz clic aquí para crear una obra",
+    detail: "Permite abrir faenas y genera el Acta Consolidada de Liquidación que agrupa todas las OTs para facturación inmediata."
   },
   // PASO 8
   {
     id: "step-8",
-    badge: "Archivo Inmutable",
+    badge: "Auditoría Legal",
     badgeColor: "bg-slate-100 text-slate-800 border-slate-200",
-    title: "Paso 8 de 16: Historial & Auditoría de Proyectos",
+    title: "8. Historial & Archivo de Proyectos",
     elementId: "tour-projects-history-container",
     tab: "project-history",
-    description: "Repositorio de obras concluidas y archivadas con filtro por rango de fechas (Desde / Hasta) para balances anuales y auditorías mineras o tributarias."
+    actionText: "👉 Consulta proyectos concluidos",
+    detail: "Filtra por rango de fechas (Desde / Hasta) para auditorías mineras, tributarias y balances anuales."
   },
   // PASO 9
   {
     id: "step-9",
-    badge: "Fase 2 • Pañol & Control de Stock",
+    badge: "Fase 2 • Pañol",
     badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
-    title: "Paso 9 de 16: Fase 2 • Pañol de Instrumental Crítico",
+    title: "9. Pañol de Instrumental Crítico",
     elementId: "tour-tools-container",
     tab: "tools",
-    description: "Las faenas de telecomunicaciones requieren instrumental de alto valor económico:",
-    bullets: [
-      "Equipos Críticos: Fusionadoras Fujikura 90S+, Reflectómetros OTDR Fluke Networks y herramientas certificadas.",
-      "Estado en Vivo: Visualización en tiempo real de qué equipos están Disponibles en bodega y cuáles están En Terreno.",
-      "Calibración y Mantención: Control de números de serie y vigencia de certificación técnica."
-    ]
+    actionText: "👉 Controla equipos de alto costo",
+    detail: "Monitorea fusionadoras Fujikura 90S+, reflectómetros OTDR Fluke Networks y stock disponible vs. en terreno."
   },
   // PASO 10
   {
     id: "step-10",
     badge: "Fase 2 • Cero Pérdidas",
     badgeColor: "bg-teal-100 text-teal-800 border-teal-200",
-    title: "Paso 10 de 16: Despacho de Instrumental con Firma Digital",
+    title: "10. Despacho con Firma Digital",
     elementId: "tour-tools-container",
     tab: "tools",
-    description: "Al retirar una herramienta cara para subir a faena:",
-    bullets: [
-      "Firma en Pantalla del Técnico: El colaborador estampa su firma biométrica en la tablet/celular acreditando la recepción conforme.",
-      "Acta Inmutable: Queda registrado el número de serie exacto, fecha, hora y técnico responsable.",
-      "Impacto Financiero: Elimina pérdidas o daños no atribuidos en herramientas de más de $5.000.000 CLP."
-    ]
+    actionText: "👉 Pulsa 'Asignar / Retirar' en un equipo",
+    detail: "El técnico estampa su firma biométrica en la tablet/celular acreditando la recepción conforme con número de serie inmutable."
   },
   // PASO 11
   {
     id: "step-11",
     badge: "Fase 2 • Retorno Ágil",
     badgeColor: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    title: "Paso 11 de 16: 'Mis Herramientas' & Devolución por Lote",
+    title: "11. Devolución por Lote en 1 Clic",
     elementId: "tour-tools-container",
     tab: "tools",
-    description: "Al terminar la jornada de trabajo:",
-    bullets: [
-      "Vista Personal: Cada técnico consulta en su teléfono la sección Mis Herramientas con los equipos bajo su custodia.",
-      "Devolución Múltiple: Con el botón Seleccionar Todas puede entregar 5 o 10 equipos simultáneamente.",
-      "Inspección Física: El pañolero valida que los equipos vuelvan limpios y operativos antes de reincorporarlos al stock general."
-    ]
+    actionText: "👉 Cada técnico ve 'Mis Herramientas'",
+    detail: "Al terminar el turno, el técnico selecciona todas sus herramientas y las devuelve en 1 solo paso con inspección física."
   },
   // PASO 12
   {
     id: "step-12",
-    badge: "Auditoría de Bodega",
-    badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
-    title: "Paso 12 de 16: Trazabilidad Legal de Actas de Pañol",
-    elementId: "tour-tool-history-container",
-    tab: "tool-history",
-    description: "Historial digitalizado de todas las entregas y devoluciones con firma del receptor, respaldando inventarios ante aseguradoras y auditorías internas."
-  },
-  // PASO 13
-  {
-    id: "step-13",
-    badge: "Fase 3 • Prevención ACHS / Mutual",
+    badge: "Fase 3 • Seguridad ACHS / Mutual",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    title: "Paso 13 de 16: Fase 3 • Seguridad Pre-Faena (HPT & Charlas)",
+    title: "12. HPT Pre-Faena & Charlas de 5 Minutos",
     elementId: "tour-welcome",
     tab: "dashboard",
-    description: "Antes de intervenir mufas, postes o salas de racks, la cuadrilla debe cumplir con los protocolos legales obligatorios:",
-    bullets: [
-      "HPT (Hoja de Planificación de Tarea): Evaluación obligatoria de riesgos críticos (altura física, espacios confinados, inducción eléctrica) y checklist de EPP normado.",
-      "Charlas Diarias de 5 Minutos: Temario diario obligatorio (LOTO, fibra óptica) y toma de firmas digitales de asistencia para mutualidades y Dirección del Trabajo.",
-      "Bloqueo de Faena: Sin la HPT aprobada y firmada, no se autoriza el inicio del trabajo técnico."
-    ]
+    actionText: "👉 Obligatorio antes de iniciar faena",
+    detail: "Checklist de riesgos críticos (altura física, electricidad), verificación de EPP normado y toma de firmas de la cuadrilla."
   },
-  // PASO 14: EL PROCESO DE LA OT POR DENTRO
+  // PASO 13: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
   {
-    id: "step-14",
-    badge: "Fase 4 • Formulario Técnico por Dentro",
+    id: "step-13",
+    badge: "Fase 4 • Emisión de la OT",
     badgeColor: "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200",
-    title: "Paso 14 de 16: Fase 4 • Desglose Técnico Completo de una OT Real",
+    title: "13. ¡Aquí emites una Orden de Trabajo!",
     elementId: "tour-btn-new-ot",
     tab: "dashboard",
-    description: "Así se compone una Orden de Trabajo técnica oficial emitida en terreno desde tablet o celular:",
+    actionText: "👉 Haz clic en '+ Crear OT'",
+    detail: "Este botón abre el formulario oficial de terreno optimizado para tablet o celular.",
     isOtShowcase: true
+  },
+  // PASO 14
+  {
+    id: "step-14",
+    badge: "Fase 5 • Ejecución Terreno",
+    badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    title: "14. Monitoreo de Órdenes Activas",
+    elementId: "tour-orders-container",
+    tab: "orders",
+    actionText: "👉 Supervisa el estado de las cuadrillas",
+    detail: "Revisa OTs en borrador, en desarrollo o listas para firma, con mediciones ópticas guardadas por puerto."
   },
   // PASO 15
   {
     id: "step-15",
-    badge: "Fase 5 • Ejecución en Terreno",
+    badge: "Doble Firma Legal Ley 19.799",
     badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    title: "Paso 15 de 16: Fase 5 • Monitoreo de Órdenes & Doble Firma Híbrida",
+    title: "15. Doble Firma Digital Híbrida",
     elementId: "tour-orders-container",
     tab: "orders",
-    description: "Tablero de seguimiento general y certificación bajo Ley 19.799:",
-    bullets: [
-      "Estado de Ejecución: Supervisión de OTs en borrador, en desarrollo o esperando validación del mandante.",
-      "Doble Firma Híbrida: Firma 1 (Técnico en terreno en pantalla táctil) + Firma 2 (Cliente presencial O remota vía enlace seguro por email/WhatsApp).",
-      "Mediciones Guardadas: Registro inmutable de atenuación óptica por puerto para el informe final."
-    ]
+    actionText: "👉 Valida el trabajo ejecutado",
+    detail: "Firma 1 (Técnico en pantalla) + Firma 2 (Cliente presencial en tablet O remota por WhatsApp/email con token seguro)."
   },
   // PASO 16
   {
     id: "step-16",
-    badge: "Fase 6 • Cierre Operativo y Cobro",
+    badge: "Fase 6 • Cierre y Cobro",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
-    title: "Paso 16 de 16: Fase 6 • Facturación Inmediata, Informe PDF & Modo Libre",
+    title: "16. Informe Formal en PDF & Fin del Tour",
     elementId: "tour-history-container",
     tab: "order-history",
-    description: "Las órdenes firmadas quedan consolidadas para facturación inmediata:",
-    bullets: [
-      "Informe Formal en PDF: Generación en 1 clic del acta técnica oficial con membrete de ICSA, fotografías de terreno y firmas estampadas.",
-      "Validez Legal: Respaldada bajo firma electrónica avanzada para contabilidad y facturación.",
-      "Operación Totalmente Desbloqueada: Has completado el recorrido. Ahora puedes usar toda la plataforma con total libertad."
-    ]
+    actionText: "👉 Pulsa 'Descargar PDF' para facturación",
+    detail: "Genera el acta oficial membretada con firmas y fotos. El tour ha finalizado: ¡ya puedes usar la app con total normalidad!"
   }
 ];
 
 export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [targetRect, setTargetRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+  const [targetRect, setTargetRect] = useState<{ top: number; left: number; width: number; height: number; bottom: number; right: number } | null>(null);
   const { toast } = useToast();
 
   const handleClose = useCallback(() => {
@@ -258,7 +222,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
 
     toast({
       title: "✨ Operación Normal Activada",
-      description: "Tour finalizado. Ahora puedes explorar, crear proyectos, emitir órdenes de trabajo y operar la plataforma con total libertad."
+      description: "Tour finalizado. Ahora puedes explorar, crear proyectos, emitir órdenes de trabajo y operar con total libertad."
     });
   }, [toast]);
 
@@ -296,7 +260,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
     }
   }, [currentStep, onTabChange]);
 
-  // Check URL on mount: only auto-launch if ?tour=true is in the query params
+  // Check URL on mount: only auto-launch if ?tour=true is present
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -314,7 +278,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
     }
   }, [handleStartTour]);
 
-  // Update spotlight rect when step changes
+  // Measure and scroll target element into view
   useEffect(() => {
     if (!isOpen) {
       setTargetRect(null);
@@ -337,15 +301,16 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
           top: rect.top,
           left: rect.left,
           width: rect.width,
-          height: rect.height
+          height: rect.height,
+          bottom: rect.bottom,
+          right: rect.right
         });
       } else {
         setTargetRect(null);
       }
     };
 
-    // Give React 120ms to switch tabs and mount components
-    const timer = setTimeout(updateRect, 150);
+    const timer = setTimeout(updateRect, 180);
 
     const onScrollOrResize = () => {
       if (!step.elementId) return;
@@ -356,7 +321,9 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
           top: rect.top,
           left: rect.left,
           width: rect.width,
-          height: rect.height
+          height: rect.height,
+          bottom: rect.bottom,
+          right: rect.right
         });
       }
     };
@@ -388,6 +355,58 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
   const step = STEPS[currentStep];
   const progressPercent = Math.round(((currentStep + 1) / STEPS.length) * 100);
 
+  // Dynamic Anchored Popover Positioning next to target element
+  const popoverPosition = useMemo(() => {
+    if (typeof window === "undefined") {
+      return { top: 100, left: 20, width: 360, placement: "bottom", arrowLeft: 50 };
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const popoverWidth = isMobile ? Math.min(window.innerWidth - 24, 380) : 400;
+    const estimatedHeight = step?.isOtShowcase ? 440 : 250;
+
+    if (!targetRect) {
+      // Center on screen if no target rect
+      return {
+        top: Math.max(20, (window.innerHeight - estimatedHeight) / 2),
+        left: Math.max(12, (window.innerWidth - popoverWidth) / 2),
+        width: popoverWidth,
+        placement: "center" as const,
+        arrowLeft: popoverWidth / 2
+      };
+    }
+
+    const spaceBelow = window.innerHeight - targetRect.bottom;
+    const spaceAbove = targetRect.top;
+
+    let placement: "bottom" | "top" = "bottom";
+    let top = targetRect.bottom + 14;
+
+    if (spaceBelow < estimatedHeight + 16 && spaceAbove > estimatedHeight + 16) {
+      placement = "top";
+      top = targetRect.top - estimatedHeight - 14;
+    } else if (spaceBelow < estimatedHeight + 16 && spaceAbove < estimatedHeight + 16) {
+      // In case element is tall or small screen, pin near bottom of screen
+      top = Math.max(16, window.innerHeight - estimatedHeight - 16);
+      placement = "bottom";
+    }
+
+    let left = targetRect.left + targetRect.width / 2 - popoverWidth / 2;
+    // Constrain within viewport boundaries
+    left = Math.max(12, Math.min(window.innerWidth - popoverWidth - 12, left));
+
+    // Arrow precisely points to the center of the target element
+    const arrowLeft = Math.max(24, Math.min(popoverWidth - 24, targetRect.left + targetRect.width / 2 - left));
+
+    return {
+      top,
+      left,
+      width: popoverWidth,
+      placement,
+      arrowLeft
+    };
+  }, [targetRect, step?.isOtShowcase]);
+
   return (
     <>
       {/* Permanent floating trigger button */}
@@ -404,165 +423,150 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
         </div>
       )}
 
-      {/* Tour Active Modal / Dock */}
+      {/* Tour Active Overlay & Anchored Tooltip */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex flex-col justify-end md:justify-center items-center p-3 md:p-6">
+        <div className="fixed inset-0 z-50 pointer-events-none">
           {/* Subtle semi-transparent backdrop */}
           <div
             onClick={handleClose}
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-[2px] pointer-events-auto transition-opacity duration-300"
-            title="Haz clic para cerrar y usar la app libremente"
+            className="fixed inset-0 bg-slate-950/50 backdrop-blur-[1px] pointer-events-auto transition-opacity duration-300"
+            title="Haz clic para salir del tour y usar la app libremente"
           />
 
-          {/* Glowing spotlight over the target element */}
+          {/* Glowing spotlight ring around the target element */}
           {targetRect && (
-            <div
-              style={{
-                top: Math.max(0, targetRect.top - 6),
-                left: Math.max(0, targetRect.left - 6),
-                width: targetRect.width + 12,
-                height: targetRect.height + 12
-              }}
-              className="fixed z-40 pointer-events-none rounded-2xl ring-4 ring-primary ring-offset-2 ring-offset-background shadow-[0_0_50px_rgba(var(--primary),0.5)] transition-all duration-300 animate-pulse"
-            />
+            <>
+              <div
+                style={{
+                  top: Math.max(0, targetRect.top - 6),
+                  left: Math.max(0, targetRect.left - 6),
+                  width: targetRect.width + 12,
+                  height: targetRect.height + 12
+                }}
+                className="fixed z-40 pointer-events-none rounded-2xl ring-4 ring-accent ring-offset-2 ring-offset-background shadow-[0_0_40px_rgba(var(--accent),0.5)] transition-all duration-300 animate-pulse"
+              />
+
+              {/* Animated beacon pointer directly pointing to the target button */}
+              <div
+                style={{
+                  top: Math.max(8, targetRect.top - 18),
+                  left: Math.min(window.innerWidth - 90, targetRect.left + targetRect.width / 2 - 45)
+                }}
+                className="fixed z-50 pointer-events-none flex flex-col items-center animate-bounce transition-all duration-300"
+              >
+                <div className="bg-accent text-primary font-black text-[10px] tracking-tight px-2.5 py-0.5 rounded-full shadow-lg border border-primary/20 flex items-center gap-1 whitespace-nowrap">
+                  <MousePointerClick size={12} className="text-primary animate-pulse" />
+                  <span>¡Haz clic aquí!</span>
+                </div>
+              </div>
+            </>
           )}
 
-          {/* Interactive Tour Card */}
+          {/* Compact Anchored Popover Card with Pointer Arrow */}
           <div
-            className="relative z-50 pointer-events-auto w-full max-w-2xl bg-white rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.35)] border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-slide-up"
+            style={{
+              top: `${popoverPosition.top}px`,
+              left: `${popoverPosition.left}px`,
+              width: `${popoverPosition.width}px`
+            }}
+            className="fixed z-50 pointer-events-auto bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 animate-slide-up"
           >
-            {/* Top Header */}
-            <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3.5 flex items-center justify-between">
+            {/* Directional arrow pointing straight to the target element */}
+            {popoverPosition.placement === "bottom" && (
+              <div
+                style={{ left: `${popoverPosition.arrowLeft}px` }}
+                className="absolute -top-1.5 w-3 h-3 bg-slate-900 border-t border-l border-slate-800 rotate-45 transform -translate-x-1/2 z-20"
+              />
+            )}
+            {popoverPosition.placement === "top" && (
+              <div
+                style={{ left: `${popoverPosition.arrowLeft}px` }}
+                className="absolute -bottom-1.5 w-3 h-3 bg-slate-50 border-b border-r border-slate-200 rotate-45 transform -translate-x-1/2 z-20"
+              />
+            )}
+
+            {/* Header */}
+            <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-4 py-2.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span className="font-black text-xs tracking-wider uppercase text-slate-200">
-                  Tour Guiado ICSA • Paso {currentStep + 1} de {STEPS.length}
+                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="font-black text-[11px] tracking-wider uppercase text-slate-200">
+                  Paso {currentStep + 1} de {STEPS.length}
                 </span>
               </div>
               <button
                 onClick={handleClose}
-                className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full p-1 transition-colors flex items-center gap-1 text-xs font-bold"
-                title="Cerrar tour y usar la app"
+                className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full p-1 transition-colors flex items-center gap-1 text-[11px] font-bold cursor-pointer"
+                title="Cerrar tour y usar la app libremente"
               >
                 <span className="hidden sm:inline">Cerrar</span>
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-slate-100 h-1.5">
+            {/* Mini Progress Bar */}
+            <div className="w-full bg-slate-100 h-1">
               <div
-                className="bg-gradient-to-r from-primary to-accent h-1.5 transition-all duration-300"
+                className="bg-gradient-to-r from-primary to-accent h-1 transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
 
-            {/* Card Content Area */}
-            <div className="p-5 overflow-y-auto space-y-3.5">
-              {/* Category Pill */}
-              <div className="flex items-center gap-2">
-                <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border ${step.badgeColor}`}>
+            {/* Content Body */}
+            <div className="p-4 space-y-2.5 max-h-[60vh] overflow-y-auto">
+              {/* Category Badge */}
+              <div className="flex items-center justify-between">
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${step.badgeColor}`}>
                   {step.badge}
                 </span>
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-[10px] font-bold text-slate-400">
                   {progressPercent}% completado
                 </span>
               </div>
 
               {/* Title */}
-              <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-snug">
+              <h3 className="text-sm md:text-base font-black text-slate-900 tracking-tight leading-snug">
                 {step.title}
-              </h2>
+              </h3>
 
-              {/* Description */}
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-medium">
-                {step.description}
+              {/* Direct Click Action Instruction */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-xs text-amber-900 font-bold flex items-start gap-2">
+                <span className="shrink-0 text-sm">👉</span>
+                <span className="leading-snug">{step.actionText}</span>
+              </div>
+
+              {/* Operational Detail */}
+              <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                {step.detail}
               </p>
-
-              {/* Bullets (if provided) */}
-              {step.bullets && step.bullets.length > 0 && (
-                <ul className="space-y-1.5 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-2xl p-3.5">
-                  {step.bullets.map((bullet, idx) => {
-                    const [head, ...rest] = bullet.split(":");
-                    return (
-                      <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle2 size={14} className="text-primary shrink-0 mt-0.5" />
-                        <span>
-                          <strong>{head}{rest.length > 0 ? ":" : ""}</strong> {rest.join(":")}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
 
               {/* SPECIAL SHOWCASE: EL PROCESO DE LA OT POR DENTRO */}
               {step.isOtShowcase && (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 text-xs">
-                  <div className="font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <ClipboardList size={16} className="text-primary" />
-                    <span>Desglose campo por campo de la OT técnica:</span>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 text-xs">
+                  <div className="font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
+                    <ClipboardList size={14} className="text-primary" />
+                    <span>Así se compone la OT técnica por dentro:</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">1</span>
-                        <span>Mandante & Faena</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Cliente (ej. <em>ICSA Minería - Codelco Centinela</em>), folio único y ubicación exacta (<em>Concentradora Racks Piso 2</em>).
-                      </p>
+                  <div className="grid grid-cols-2 gap-1.5 text-left text-[11px]">
+                    <div className="bg-white p-2 rounded-lg border border-slate-200">
+                      <span className="font-black text-primary">1. Mandante & Faena</span>
+                      <p className="text-[10px] text-slate-500">Codelco / Centinela y folio.</p>
                     </div>
-
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">2</span>
-                        <span>Cuadrilla Acreditada</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Asignación del técnico responsable acreditado con RUT y ayudantes de terreno autorizados.
-                      </p>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200">
+                      <span className="font-black text-primary">2. Cuadrilla</span>
+                      <p className="text-[10px] text-slate-500">Jefe técnico y ayudantes.</p>
                     </div>
-
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">3</span>
-                        <span>Medición Fibra & Red</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Cuantificación de <strong>48 fusiones ODF monomodo</strong>, <strong>24 puntos Cat 6A</strong> y atenuación &lt; 0.02 dB.
-                      </p>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200">
+                      <span className="font-black text-primary">3. Fibra & Red</span>
+                      <p className="text-[10px] text-slate-500">48 fusiones &lt; 0.02 dB.</p>
                     </div>
-
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">4</span>
-                        <span>Evidencia Fotográfica</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Respaldo fotográfico del empalme con compresión automática para subida veloz bajo redes 3G.
-                      </p>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200">
+                      <span className="font-black text-primary">4. Fotos 3G</span>
+                      <p className="text-[10px] text-slate-500">Compresión de empalmes.</p>
                     </div>
-
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">5</span>
-                        <span>Doble Firma en Terreno</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Firma biométrica del técnico + firma presencial o remota del cliente (Ley 19.799).
-                      </p>
-                    </div>
-
-                    <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="font-bold text-primary flex items-center gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/10 text-primary text-[10px] flex items-center justify-center font-black">6</span>
-                        <span>Acta Oficial en PDF</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 mt-1">
-                        Generación automática del acta membretada lista para cobro contable sin disputas.
-                      </p>
+                    <div className="bg-white p-2 rounded-lg border border-slate-200 col-span-2">
+                      <span className="font-black text-primary">5. Doble Firma Digital</span>
+                      <p className="text-[10px] text-slate-500">Técnico en tablet + Cliente presencial/remota.</p>
                     </div>
                   </div>
 
@@ -570,69 +574,58 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
                     href="/work-orders/new?demo=true"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-black text-xs py-3 px-4 rounded-xl shadow-lg shadow-teal-600/25 transition-all hover:scale-[1.01]"
+                    className="w-full flex items-center justify-center gap-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-black text-[11px] py-2 px-3 rounded-lg shadow-sm transition-all hover:scale-[1.01]"
                   >
-                    <span>📝 Abrir Formulario Real Prellenado con Datos Demo (Nueva Pestaña) ↗</span>
+                    <span>📝 Abrir Formulario Real Pre-llenado ↗</span>
                   </a>
-                </div>
-              )}
-
-              {/* Optional Note */}
-              {step.note && (
-                <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 text-xs text-teal-800 font-medium">
-                  {step.note}
                 </div>
               )}
             </div>
 
-            {/* Bottom Controls */}
-            <div className="bg-slate-50 border-t border-slate-200 px-5 py-3.5 flex items-center justify-between gap-3">
+            {/* Compact Footer Controls */}
+            <div className="bg-slate-50 border-t border-slate-200 px-3.5 py-2.5 flex items-center justify-between gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handlePrev}
                 disabled={currentStep === 0}
-                className="font-bold text-xs rounded-xl h-10 px-4 border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
+                className="font-bold text-[11px] rounded-lg h-8 px-2.5 border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40"
               >
-                <ChevronLeft size={16} className="mr-1" /> Anterior
+                <ChevronLeft size={14} className="mr-0.5" /> Ant.
               </Button>
 
-              {/* Step indicator dots */}
-              <div className="hidden sm:flex items-center gap-1">
+              {/* Step dots */}
+              <div className="flex items-center gap-1">
                 {STEPS.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => handleStartTour(i)}
-                    className={`h-2 rounded-full transition-all ${
+                    className={`h-1.5 rounded-full transition-all ${
                       i === currentStep
-                        ? "w-6 bg-primary"
+                        ? "w-4 bg-primary"
                         : i < currentStep
-                        ? "w-2 bg-primary/40 hover:bg-primary/60"
-                        : "w-2 bg-slate-300 hover:bg-slate-400"
+                        ? "w-1.5 bg-primary/40 hover:bg-primary/60"
+                        : "w-1.5 bg-slate-300 hover:bg-slate-400"
                     }`}
-                    title={`Ir al Paso ${i + 1}`}
+                    title={`Paso ${i + 1}`}
                   />
                 ))}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleNext}
-                  className="bg-primary hover:bg-primary/90 text-white font-black text-xs rounded-xl h-10 px-5 shadow-md shadow-primary/25 gap-1.5"
-                >
-                  {currentStep === STEPS.length - 1 ? (
-                    <>
-                      <span>🎉 ¡Finalizar y Usar App!</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Siguiente</span>
-                      <ChevronRight size={16} />
-                    </>
-                  )}
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                onClick={handleNext}
+                className="bg-primary hover:bg-primary/90 text-white font-black text-[11px] rounded-lg h-8 px-3 shadow-sm gap-1"
+              >
+                {currentStep === STEPS.length - 1 ? (
+                  <span>🎉 Finalizar</span>
+                ) : (
+                  <>
+                    <span>Sig.</span>
+                    <ChevronRight size={14} />
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
