@@ -10,17 +10,17 @@ import { Input } from "@/components/ui/input";
 import {
   Plus, Search, LogOut, LayoutDashboard,
   Eye, Download, Users, UserRound, Building2,
-  Trash2, History, Briefcase, FolderOpen, ClipboardList, BookOpen, Pencil, Menu, ChevronRight, FileText, Info, Clock, CheckCircle, Loader2, ArrowRight, Wrench, Package, Filter, MoreHorizontal, X, RefreshCw, ShieldCheck
+  Trash2, History, Briefcase, FolderOpen, ClipboardList, BookOpen, Pencil, Menu, ChevronRight, FileText, Info, Clock, CheckCircle, Loader2, ArrowRight, Wrench, Package, Filter, MoreHorizontal, X, RefreshCw, ShieldCheck, Settings
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { generateWorkOrderPDF, generateToolReportPDF, generateBatchReturnActPDF } from "@/lib/pdf-generator";
+import { generateWorkOrderPDF, generateToolReportPDF, generateBatchReturnActPDF, generateHPTPDF, generateCharlaPDF } from "@/lib/pdf-generator";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useUser, useUserProfile } from "@/lib/auth-provider";
 import { useActionData } from "@/hooks/use-action-data";
-import { getActiveProjects, getWorkOrders, getArchivedWorkOrders, deleteRecord, hideWorkOrder, hideProject, getTools, saveTool, deleteTool, getToolMovements, approveToolReturn, returnMultipleTools, assignMultipleTools, getClients, getPersonnel } from "@/actions/db-actions";
+import { getActiveProjects, getWorkOrders, getArchivedWorkOrders, deleteRecord, hideWorkOrder, hideProject, getTools, saveTool, deleteTool, getToolMovements, approveToolReturn, returnMultipleTools, assignMultipleTools, getClients, getPersonnel, getHPTs, getHPTById, getHPTQuestions, getCapacitaciones, getCapacitacionById } from "@/actions/db-actions";
 import { logoutAction, autoDemoLogin } from "@/actions/auth-actions";
 import { cn, formatFolio } from "@/lib/utils";
 import {
@@ -115,8 +115,20 @@ function DashboardContent() {
 
   const isAdmin = userProfile?.rol_t?.toLowerCase() === 'admin' || 
     userProfile?.rol_t?.toLowerCase() === 'administrador';
+  const isPrevencionista = userProfile?.rol_t?.toLowerCase() === 'prevencionista' || 
+    userProfile?.rol_t?.toLowerCase() === 'prevenc';
   
   const isPrivileged = isAdmin;
+
+  const { data: hpts, isLoading: isHptLoading } = useActionData<any[]>(() => {
+    if (!user?.uid || isProfileLoading) return Promise.resolve([]);
+    return getHPTs(user.uid, isAdmin, isPrevencionista);
+  }, [user?.uid, isAdmin, isPrevencionista, isProfileLoading]);
+
+  const { data: capacitaciones, isLoading: isCapLoading } = useActionData<any[]>(() => {
+    if (!user?.uid || isProfileLoading) return Promise.resolve([]);
+    return getCapacitaciones(user.uid, isAdmin, isPrevencionista);
+  }, [user?.uid, isAdmin, isPrevencionista, isProfileLoading]);
 
   const { data: projects, isLoading: isProjectsLoading } = useActionData(() => {
     if (!user?.uid || isProfileLoading) return Promise.resolve([]);
@@ -236,6 +248,48 @@ function DashboardContent() {
     return tools.filter((t: any) => t.asignadoA === identifier && t.estado === 'En Terreno');
   }, [tools, user, userProfile]);
 
+  const filteredHPTs = useMemo(() => {
+    if (!hpts) return [];
+    return hpts.filter((h: any) => 
+      h.supervisorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      h.trabajoRealizar?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      h.folio?.toString().includes(searchTerm)
+    );
+  }, [hpts, searchTerm]);
+
+  const filteredCaps = useMemo(() => {
+    if (!capacitaciones) return [];
+    return capacitaciones.filter((c: any) => 
+      c.supervisorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.temario?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.lugar?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.folio?.toString().includes(searchTerm)
+    );
+  }, [capacitaciones, searchTerm]);
+
+  const handleDownloadHPTPDF = async (id: string) => {
+    try {
+      const fullData = await getHPTById(id);
+      const questions = await getHPTQuestions();
+      if (fullData) {
+        await generateHPTPDF(fullData, questions);
+      }
+    } catch (e) {
+      console.error("Error generating HPT PDF:", e);
+    }
+  };
+
+  const handleDownloadCharlaPDF = async (id: string) => {
+    try {
+      const fullData = await getCapacitacionById(id);
+      if (fullData) {
+        await generateCharlaPDF(fullData);
+      }
+    } catch (e) {
+      console.error("Error generating Charla PDF:", e);
+    }
+  };
+
   const handleSaveTool = async (data: any, signatureUrl?: string) => {
     // Basic security check: only admins can change technical data (nombre, marca, etc.)
     // Technicians only call this for assignment changes where toolModalOpen is false
@@ -304,7 +358,7 @@ function DashboardContent() {
           { id: "order-history", icon: History, label: "Historial Órdenes" },
           { id: "tools", icon: Wrench, label: "Control Herramientas" },
           { id: "tool-history", icon: FileText, label: "Actas Herramientas" },
-          { id: "hpt", icon: FileText, label: "HPT (Seguridad)" },
+          { id: "hpt", icon: ShieldCheck, label: "HPT (Seguridad)" },
           { id: "capacitaciones", icon: BookOpen, label: "Charlas" }
         ].map((item) => (
           <Button
@@ -316,8 +370,6 @@ function DashboardContent() {
               activeTab === item.id ? "bg-white text-primary shadow-md" : "text-white/70 hover:bg-white/10 hover:text-white"
             )}
             onClick={() => { 
-              if (item.id === 'hpt') { router.push('/hpt'); return; }
-              if (item.id === 'capacitaciones') { router.push('/capacitaciones'); return; }
               setTab(item.id); 
               setSearchTerm(""); 
               setIsMobileMenuOpen(false); 
@@ -410,6 +462,8 @@ function DashboardContent() {
       case "order-history": return "Historial de Órdenes";
       case "tools": return "Control de Herramientas";
       case "tool-history": return "Actas de Movimiento";
+      case "hpt": return "Seguridad en Terreno (HPT)";
+      case "capacitaciones": return "Charlas de Seguridad";
       default: return "Panel";
     }
   };
@@ -477,142 +531,54 @@ function DashboardContent() {
         </div>
 
         {activeTab === "dashboard" && (
-          <div className="space-y-8 animate-fade-in">
-            {/* Grilla Principal de Operaciones */}
-            <div id="tour-stats-grid" className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
-              <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-                <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
-                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
-                    <FolderOpen size={16} /> Proyectos en Ejecución
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ProjectTable projects={activeProjects.slice(0, 5)} isLoading={isProjectsLoading} setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
-                </CardContent>
-              </Card>
+          <div id="tour-stats-grid" className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 animate-fade-in">
+            <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+              <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
+                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
+                  <FolderOpen size={16} /> Proyectos en Ejecución
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ProjectTable projects={activeProjects.slice(0, 5)} isLoading={isProjectsLoading} setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
+              </CardContent>
+            </Card>
 
-              <Card id="tour-card-orders" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-                <CardHeader className="bg-accent/[0.08] p-6 border-b border-accent/10">
-                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
-                    <ClipboardList size={16} /> Órdenes Pendientes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <OrderTable orders={(orders || []).slice(0, 5)} isLoading={isOrdersLoading} type="ordenes" setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
-                </CardContent>
-              </Card>
+            <Card id="tour-card-orders" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+              <CardHeader className="bg-accent/[0.08] p-6 border-b border-accent/10">
+                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
+                  <ClipboardList size={16} /> Órdenes Pendientes
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <OrderTable orders={(orders || []).slice(0, 5)} isLoading={isOrdersLoading} type="ordenes" setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
+              </CardContent>
+            </Card>
 
-              <Card id="tour-card-tools" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
-                <CardHeader className="bg-primary/[0.05] p-6 border-b border-primary/5">
-                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center justify-between">
-                    <div className="flex items-center gap-3"><Wrench size={16} /> Control Herramientas</div>
-                    <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-8 flex flex-col items-center justify-center text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Package size={32} className="text-primary" />
+            <Card id="tour-card-tools" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
+              <CardHeader className="bg-primary/[0.05] p-6 border-b border-primary/5">
+                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center justify-between">
+                  <div className="flex items-center gap-3"><Wrench size={16} /> Control Herramientas</div>
+                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Package size={32} className="text-primary" />
+                </div>
+                <h3 className="font-black text-primary text-lg uppercase tracking-tighter mb-1">Inventario & Equipos</h3>
+                <p className="text-xs font-bold text-muted-foreground uppercase mb-6 leading-tight">Gestiona taladros, escaleras y equipos en terreno</p>
+                <div className="flex gap-4 w-full">
+                  <div className="flex-1 bg-primary/5 p-3 rounded-2xl">
+                    <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'Disponible').length || 0}</div>
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">Disponibles</div>
                   </div>
-                  <h3 className="font-black text-primary text-lg uppercase tracking-tighter mb-1">Inventario & Equipos</h3>
-                  <p className="text-xs font-bold text-muted-foreground uppercase mb-6 leading-tight">Gestiona taladros, escaleras y equipos en terreno</p>
-                  <div className="flex gap-4 w-full">
-                    <div className="flex-1 bg-primary/5 p-3 rounded-2xl">
-                      <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'Disponible').length || 0}</div>
-                      <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">Disponibles</div>
-                    </div>
-                    <div className="flex-1 bg-accent/20 p-3 rounded-2xl">
-                      <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'En Terreno').length || 0}</div>
-                      <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">En Terreno</div>
-                    </div>
+                  <div className="flex-1 bg-accent/20 p-3 rounded-2xl">
+                    <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'En Terreno').length || 0}</div>
+                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">En Terreno</div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Módulos de Seguridad y Charlas */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card id="tour-card-safety" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-                <CardHeader className="bg-rose-500/[0.05] p-6 border-b border-rose-500/10">
-                  <CardTitle className="text-[11px] font-black uppercase text-rose-700 tracking-[0.2em] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck size={18} className="text-rose-600" />
-                      <span>Seguridad en Terreno & HPT</span>
-                    </div>
-                    <Link href="/hpt" className="text-[10px] font-bold text-rose-700 hover:underline flex items-center gap-1 lowercase">
-                      ver registros <ChevronRight size={12} />
-                    </Link>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center shrink-0">
-                      <ShieldCheck size={24} className="text-rose-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-black text-slate-800 text-sm tracking-tight mb-1">
-                        Hoja de Planificación del Trabajo (HPT)
-                      </h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                        Evaluación previa obligatoria de riesgos críticos (altura física, electricidad, espacios confinados), verificación de EPP normado y toma de firmas de la cuadrilla con validación remota por Prevención.
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        <Link href="/hpt">
-                          <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold text-xs border-rose-200 text-rose-700 hover:bg-rose-50">
-                            <FileText size={14} className="mr-1.5" /> Ver HPTs
-                          </Button>
-                        </Link>
-                        <Link href="/hpt/new">
-                          <Button size="sm" className="h-9 px-4 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
-                            <Plus size={14} className="mr-1.5" /> Nueva HPT
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card id="tour-card-charlas" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-                <CardHeader className="bg-sky-500/[0.05] p-6 border-b border-sky-500/10">
-                  <CardTitle className="text-[11px] font-black uppercase text-sky-800 tracking-[0.2em] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <BookOpen size={18} className="text-sky-600" />
-                      <span>Charlas de Seguridad (5 Minutos)</span>
-                    </div>
-                    <Link href="/capacitaciones" className="text-[10px] font-bold text-sky-800 hover:underline flex items-center gap-1 lowercase">
-                      ver historial <ChevronRight size={12} />
-                    </Link>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center shrink-0">
-                      <BookOpen size={24} className="text-sky-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-black text-slate-800 text-sm tracking-tight mb-1">
-                        Inducción Diaria & Derecho a Saber (DAS)
-                      </h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                        Registro de temas de seguridad e inducciones diarias previas al inicio de la jornada. Recolecta firmas táctiles en pantalla de cada técnico asistente y genera el acta oficial en PDF.
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        <Link href="/capacitaciones">
-                          <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold text-xs border-sky-200 text-sky-800 hover:bg-sky-50">
-                            <FileText size={14} className="mr-1.5" /> Ver Charlas
-                          </Button>
-                        </Link>
-                        <Link href="/capacitaciones/new">
-                          <Button size="sm" className="h-9 px-4 rounded-xl font-bold text-xs bg-sky-600 hover:bg-sky-700 text-white shadow-sm">
-                            <Plus size={14} className="mr-1.5" /> Registrar Charla
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -1082,6 +1048,224 @@ function DashboardContent() {
                 </Table>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === "hpt" && (
+          <div id="tour-hpt-container" className="space-y-6 animate-in fade-in duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl shadow-primary/5">
+              <div>
+                <h2 className="text-2xl font-black text-primary tracking-tighter uppercase italic flex items-center gap-2">
+                  <ShieldCheck className="h-7 w-7 text-primary" />
+                  Seguridad en Terreno (HPT)
+                </h2>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Hoja de Planificación del Trabajo y Riesgos Críticos</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {(isAdmin || isPrevencionista) && (
+                  <Link href="/hpt/settings">
+                    <Button variant="outline" className="h-12 px-6 rounded-2xl bg-white text-primary border border-primary/10 hover:bg-primary/5 font-black uppercase tracking-tighter gap-2 shadow-lg shadow-primary/5 active:scale-95 transition-all">
+                      <Settings size={20} /> Configuración HPT
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/hpt/new">
+                  <Button className="h-12 px-6 rounded-2xl bg-primary text-white hover:bg-primary/90 font-black uppercase tracking-tighter gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
+                    <Plus size={20} /> Nueva HPT
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative group max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Input
+                type="text"
+                placeholder="Buscar por supervisor, folio o trabajo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 bg-white/80 border-none rounded-2xl font-bold shadow-sm focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            {isHptLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                <p className="font-black text-xs uppercase tracking-widest opacity-40">Buscando documentos...</p>
+              </div>
+            ) : filteredHPTs.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredHPTs.map((hpt: any) => (
+                  <Card key={hpt.id} className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.08)] transition-all">
+                    <CardContent className="p-0">
+                      <div className="p-6 space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3">
+                            <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center">
+                              <FileText className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Folio #{String(hpt.folio).padStart(5, '0')}</span>
+                              <span className="font-black text-sm uppercase tracking-tighter mt-1">{hpt.supervisorName || 'Sin Nombre'}</span>
+                            </div>
+                          </div>
+                          <Badge className={`rounded-xl px-3 py-1 text-[8px] font-black uppercase tracking-widest ${hpt.status === 'Completado' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}`}>
+                            {hpt.status}
+                          </Badge>
+                        </div>
+
+                        <p className="text-xs font-medium text-muted-foreground line-clamp-2 italic">
+                          "{hpt.trabajoRealizar || 'Sin descripción de trabajo'}"
+                        </p>
+
+                        <div className="flex items-center gap-4 pt-2 border-t border-black/5 text-[10px] font-bold text-muted-foreground">
+                          <div className="flex items-center gap-1.5 uppercase tracking-widest">
+                            <Clock className="h-3 w-3 text-primary" />
+                            {hpt.fecha ? new Date(hpt.fecha).toLocaleDateString('es-CL') : 'Hoy'}
+                          </div>
+                          <div className="flex items-center gap-1.5 uppercase tracking-widest">
+                            <UserRound className="h-3 w-3 text-primary" />
+                            {hpt.supervisorRut || 'RUT'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-muted/30 p-3 flex gap-2">
+                        {((isAdmin || isPrevencionista) || (hpt.status === 'Borrador' && hpt.supervisorId === user?.uid)) && (
+                          <Link href={`/hpt/${hpt.id}/edit`} className="flex-1">
+                            <Button variant="outline" className="w-full h-10 rounded-xl font-black text-[10px] uppercase tracking-widest bg-white text-primary border-none shadow-sm">Editar</Button>
+                          </Link>
+                        )}
+                        <Button 
+                          onClick={() => handleDownloadHPTPDF(hpt.id)}
+                          className="flex-1 h-10 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20"
+                        >
+                          Ver PDF
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white/50 backdrop-blur-sm border-2 border-dashed border-primary/20 rounded-3xl p-16 text-center space-y-4">
+                <div className="h-16 w-16 rounded-full bg-primary/5 flex items-center justify-center mx-auto">
+                  <ShieldCheck className="h-8 w-8 text-primary/30" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-black text-lg uppercase tracking-tighter">No hay documentos HPT</h3>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">Empieza creando una Hoja de Planificación del Trabajo para terreno.</p>
+                </div>
+                <Link href="/hpt/new" className="inline-block mt-4">
+                  <Button className="bg-primary text-white font-black rounded-2xl px-8 h-12 uppercase tracking-widest shadow-xl shadow-primary/30">
+                    <Plus className="h-4 w-4 mr-2" /> Crear HPT
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "capacitaciones" && (
+          <div id="tour-capacitaciones-container" className="space-y-6 animate-in fade-in duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl shadow-primary/5">
+              <div>
+                <h2 className="text-2xl font-black text-primary tracking-tighter uppercase italic flex items-center gap-2">
+                  <BookOpen className="h-7 w-7 text-primary" />
+                  Charlas de Seguridad (5 Minutos)
+                </h2>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Inducciones Diarias & Derecho a Saber (DAS)</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/capacitaciones/new">
+                  <Button className="h-12 px-6 rounded-2xl bg-primary text-white hover:bg-primary/90 font-black uppercase tracking-tighter gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
+                    <Plus size={20} /> Nueva Charla
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative group max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Input
+                type="text"
+                placeholder="Buscar por supervisor, tema o lugar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 bg-white/80 border-none rounded-2xl font-bold shadow-sm focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            {isCapLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                <p className="font-black text-xs uppercase tracking-widest opacity-40">Buscando charlas...</p>
+              </div>
+            ) : filteredCaps.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredCaps.map((cap: any) => (
+                  <Card key={cap.id} className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.08)] transition-all">
+                    <CardContent className="p-0">
+                      <div className="p-6 space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3">
+                            <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center">
+                              <BookOpen className="h-6 w-6 text-primary" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">Folio #{String(cap.folio).padStart(5, '0')}</span>
+                              <span className="font-black text-sm uppercase tracking-tighter mt-1">{cap.supervisorName || 'Sin Nombre'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className="text-xs font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                            <Building2 className="h-3.5 w-3.5" /> {cap.lugar || 'Ubicación no especificada'}
+                          </p>
+                          <p className="text-xs font-medium text-muted-foreground line-clamp-2">
+                            {cap.temario || 'Sin temario detallado'}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-4 pt-2 border-t border-black/5 text-[10px] font-bold text-muted-foreground">
+                          <div className="flex items-center gap-1.5 uppercase tracking-widest">
+                            <Clock className="h-3 w-3 text-primary" />
+                            {cap.fecha ? new Date(cap.fecha).toLocaleDateString('es-CL') : 'Hoy'}
+                          </div>
+                          <div className="flex items-center gap-1.5 uppercase tracking-widest">
+                            <UserRound className="h-3 w-3 text-primary" />
+                            {cap.horaInicio || '08:00'} - {cap.horaTermino || '08:05'}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-muted/30 p-3 flex gap-2">
+                        <Button 
+                          onClick={() => handleDownloadCharlaPDF(cap.id)}
+                          className="w-full h-10 rounded-xl bg-primary text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20"
+                        >
+                          Ver PDF
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white/50 backdrop-blur-sm border-2 border-dashed border-primary/20 rounded-3xl p-16 text-center space-y-4">
+                <div className="h-16 w-16 rounded-full bg-primary/5 flex items-center justify-center mx-auto">
+                  <BookOpen className="h-8 w-8 text-primary/30" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-black text-lg uppercase tracking-tighter">No hay charlas registradas</h3>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">Empieza registrando una inducción diaria de 5 minutos.</p>
+                </div>
+                <Link href="/capacitaciones/new" className="inline-block mt-4">
+                  <Button className="bg-primary text-white font-black rounded-2xl px-8 h-12 uppercase tracking-widest shadow-xl shadow-primary/30">
+                    <Plus className="h-4 w-4 mr-2" /> Registrar Charla
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         )}
 

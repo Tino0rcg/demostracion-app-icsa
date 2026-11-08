@@ -150,10 +150,10 @@ const STEPS: TourStep[] = [
     badge: "Fase 3 • Seguridad ACHS / Mutual",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
     title: "12. Seguridad en Terreno: HPT (Hoja de Planificación del Trabajo)",
-    elementId: "tour-card-safety",
-    tab: "dashboard",
-    actionText: "Pulsa aquí para gestionar las HPTs de Seguridad",
-    detail: "Obligatorio antes de iniciar el trabajo: se evalúan los riesgos críticos (altura física, electricidad, espacios confinados), se verifica el EPP normado y se toma la firma de la cuadrilla. El documento se envía al departamento de Prevención de Riesgos, quien valida y firma de forma remota, despachando el PDF oficial por correo."
+    elementId: "tour-hpt-container",
+    tab: "hpt",
+    actionText: "Revisa las HPTs o pulsa '+ Nueva HPT'",
+    detail: "Aquí se gestiona el apartado de Seguridad: Hoja de Planificación del Trabajo (HPT). Obligatorio antes de iniciar el trabajo en terreno: se evalúan los riesgos críticos (altura física, electricidad, espacios confinados), se verifica el EPP normado y se toma la firma de la cuadrilla. El documento se envía al departamento de Prevención de Riesgos, quien valida y firma de forma remota, despachando el PDF oficial por correo."
   },
   // PASO 13: CHARLAS DE SEGURIDAD
   {
@@ -161,10 +161,10 @@ const STEPS: TourStep[] = [
     badge: "Fase 3 • Prevención & Capacitación",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
     title: "13. Charlas de Seguridad (5 Minutos Diarias)",
-    elementId: "tour-card-charlas",
-    tab: "dashboard",
-    actionText: "Pulsa aquí para registrar o revisar Charlas",
-    detail: "Registro obligatorio de inducciones diarias y Derecho a Saber (DAS). Permite ingresar el temario técnico y de seguridad de la jornada y recolectar las firmas táctiles en pantalla de cada técnico asistente, generando el acta formal de capacitación en PDF."
+    elementId: "tour-capacitaciones-container",
+    tab: "capacitaciones",
+    actionText: "Revisa las Charlas o pulsa '+ Nueva Charla'",
+    detail: "Aquí se gestiona el apartado de Charlas de Seguridad: inducciones diarias obligatorias de 5 minutos y Derecho a Saber (DAS). Se registra el temario de seguridad de la jornada y cada trabajador de la cuadrilla estampa su firma biométrica en la pantalla del celular o tablet, generando el acta oficial en PDF con respaldo legal inmediato."
   },
   // PASO 14: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
   {
