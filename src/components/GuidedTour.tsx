@@ -48,13 +48,13 @@ const STEPS: TourStep[] = [
   // PASO 3
   {
     id: "step-3",
-    badge: "Contratos de Obras",
+    badge: "Proyectos Integrales",
     badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
-    title: "3. Obras Prioritarias",
+    title: "3. Proyectos Recientes o en Ejecución",
     elementId: "tour-card-projects",
     tab: "dashboard",
-    actionText: "Pulsa sobre esta tarjeta para ver proyectos",
-    detail: "Muestra los 5 contratos principales (Codelco, Entel) con fechas contractuales y porcentaje de avance."
+    actionText: "Pulsa sobre esta tarjeta para gestionar proyectos",
+    detail: "Muestra los proyectos que se han realizado recientemente o están en ejecución. Los proyectos agrupan trabajos de mayor envergadura y contienen todas las OTs que se requieran; al finalizar, el sistema genera automáticamente un Acta o Informe Final consolidado con doble firma (supervisor y receptor del cliente), ya sea presencial en pantalla o enviada para firma remota."
   },
   // PASO 4: ÓRDENES PENDIENTES
   {
@@ -144,57 +144,68 @@ const STEPS: TourStep[] = [
     actionText: "Cada técnico ve 'Mis Herramientas'",
     detail: "Al terminar el turno, el técnico selecciona todas sus herramientas y las devuelve en 1 solo paso con inspección física."
   },
-  // PASO 12
+  // PASO 12: MÓDULO DE SEGURIDAD & HPT
   {
     id: "step-12",
     badge: "Fase 3 • Seguridad ACHS / Mutual",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    title: "12. HPT Previa al Trabajo & Charlas de 5 Minutos",
-    elementId: "tour-welcome",
+    title: "12. Seguridad en Terreno: HPT (Hoja de Planificación del Trabajo)",
+    elementId: "tour-card-safety",
     tab: "dashboard",
-    actionText: "Obligatorio antes de iniciar el trabajo",
-    detail: "Checklist de riesgos críticos (altura física, electricidad), verificación de EPP normado y toma de firmas de la cuadrilla."
+    actionText: "Pulsa aquí para gestionar las HPTs de Seguridad",
+    detail: "Obligatorio antes de iniciar el trabajo: se evalúan los riesgos críticos (altura física, electricidad, espacios confinados), se verifica el EPP normado y se toma la firma de la cuadrilla. El documento se envía al departamento de Prevención de Riesgos, quien valida y firma de forma remota, despachando el PDF oficial por correo."
   },
-  // PASO 13: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
+  // PASO 13: CHARLAS DE SEGURIDAD
   {
     id: "step-13",
+    badge: "Fase 3 • Prevención & Capacitación",
+    badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
+    title: "13. Charlas de Seguridad (5 Minutos Diarias)",
+    elementId: "tour-card-charlas",
+    tab: "dashboard",
+    actionText: "Pulsa aquí para registrar o revisar Charlas",
+    detail: "Registro obligatorio de inducciones diarias y Derecho a Saber (DAS). Permite ingresar el temario técnico y de seguridad de la jornada y recolectar las firmas táctiles en pantalla de cada técnico asistente, generando el acta formal de capacitación en PDF."
+  },
+  // PASO 14: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
+  {
+    id: "step-14",
     badge: "Fase 4 • Emisión de la OT",
     badgeColor: "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200",
-    title: "13. ¡Aquí emites una Orden de Trabajo!",
+    title: "14. ¡Aquí emites una Orden de Trabajo!",
     elementId: "tour-btn-new-ot",
     tab: "dashboard",
     actionText: "Haz clic en '+ Crear OT'",
     detail: "Este botón abre el formulario oficial de terreno optimizado para tablet o celular.",
     isOtShowcase: true
   },
-  // PASO 14
+  // PASO 15
   {
-    id: "step-14",
+    id: "step-15",
     badge: "Fase 5 • Ejecución Terreno",
     badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    title: "14. Monitoreo de Órdenes Activas",
+    title: "15. Monitoreo de Órdenes Activas",
     elementId: "tour-orders-container",
     tab: "orders",
     actionText: "Supervisa el estado de las cuadrillas",
     detail: "Revisa OTs en borrador, en desarrollo o esperando validación, con mediciones ópticas guardadas por puerto."
   },
-  // PASO 15
+  // PASO 16
   {
-    id: "step-15",
+    id: "step-16",
     badge: "Doble Firma Legal Ley 19.799",
     badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    title: "15. Doble Firma Digital Híbrida",
+    title: "16. Doble Firma Digital Híbrida",
     elementId: "tour-orders-container",
     tab: "orders",
     actionText: "Valida el trabajo ejecutado",
     detail: "Firma 1 (Técnico en pantalla) + Firma 2 (Cliente presencial en tablet O remota por WhatsApp/email con token seguro)."
   },
-  // PASO 16
+  // PASO 17
   {
-    id: "step-16",
+    id: "step-17",
     badge: "Fase 6 • Cierre y Cobro",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
-    title: "16. Informe Formal en PDF & Fin del Tour",
+    title: "17. Informe Formal en PDF & Fin del Tour",
     elementId: "tour-history-container",
     tab: "order-history",
     actionText: "Pulsa 'Descargar PDF' para facturación",

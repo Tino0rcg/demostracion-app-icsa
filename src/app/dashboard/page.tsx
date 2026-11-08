@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import {
   Plus, Search, LogOut, LayoutDashboard,
   Eye, Download, Users, UserRound, Building2,
-  Trash2, History, Briefcase, FolderOpen, ClipboardList, BookOpen, Pencil, Menu, ChevronRight, FileText, Info, Clock, CheckCircle, Loader2, ArrowRight, Wrench, Package, Filter, MoreHorizontal, X, RefreshCw
+  Trash2, History, Briefcase, FolderOpen, ClipboardList, BookOpen, Pencil, Menu, ChevronRight, FileText, Info, Clock, CheckCircle, Loader2, ArrowRight, Wrench, Package, Filter, MoreHorizontal, X, RefreshCw, ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -477,54 +477,142 @@ function DashboardContent() {
         </div>
 
         {activeTab === "dashboard" && (
-          <div id="tour-stats-grid" className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 animate-fade-in">
-            <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-              <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
-                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
-                  <FolderOpen size={16} /> Proyectos en Ejecución
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ProjectTable projects={activeProjects.slice(0, 5)} isLoading={isProjectsLoading} setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
-              </CardContent>
-            </Card>
+          <div className="space-y-8 animate-fade-in">
+            {/* Grilla Principal de Operaciones */}
+            <div id="tour-stats-grid" className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
+              <Card id="tour-card-projects" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+                <CardHeader className="bg-primary/[0.03] p-6 border-b border-primary/5">
+                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
+                    <FolderOpen size={16} /> Proyectos en Ejecución
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ProjectTable projects={activeProjects.slice(0, 5)} isLoading={isProjectsLoading} setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
+                </CardContent>
+              </Card>
 
-            <Card id="tour-card-orders" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
-              <CardHeader className="bg-accent/[0.08] p-6 border-b border-accent/10">
-                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
-                  <ClipboardList size={16} /> Órdenes Pendientes
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <OrderTable orders={(orders || []).slice(0, 5)} isLoading={isOrdersLoading} type="ordenes" setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
-              </CardContent>
-            </Card>
+              <Card id="tour-card-orders" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+                <CardHeader className="bg-accent/[0.08] p-6 border-b border-accent/10">
+                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center gap-3">
+                    <ClipboardList size={16} /> Órdenes Pendientes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <OrderTable orders={(orders || []).slice(0, 5)} isLoading={isOrdersLoading} type="ordenes" setDeleteConfirm={setDeleteConfirm} isAdmin={isPrivileged} />
+                </CardContent>
+              </Card>
 
-            <Card id="tour-card-tools" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
-              <CardHeader className="bg-primary/[0.05] p-6 border-b border-primary/5">
-                <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center justify-between">
-                  <div className="flex items-center gap-3"><Wrench size={16} /> Control Herramientas</div>
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Package size={32} className="text-primary" />
-                </div>
-                <h3 className="font-black text-primary text-lg uppercase tracking-tighter mb-1">Inventario & Equipos</h3>
-                <p className="text-xs font-bold text-muted-foreground uppercase mb-6 leading-tight">Gestiona taladros, escaleras y equipos en terreno</p>
-                <div className="flex gap-4 w-full">
-                  <div className="flex-1 bg-primary/5 p-3 rounded-2xl">
-                    <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'Disponible').length || 0}</div>
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">Disponibles</div>
+              <Card id="tour-card-tools" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer group" onClick={() => setTab("tools")}>
+                <CardHeader className="bg-primary/[0.05] p-6 border-b border-primary/5">
+                  <CardTitle className="text-[11px] font-black uppercase text-primary tracking-[0.2em] flex items-center justify-between">
+                    <div className="flex items-center gap-3"><Wrench size={16} /> Control Herramientas</div>
+                    <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8 flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Package size={32} className="text-primary" />
                   </div>
-                  <div className="flex-1 bg-accent/20 p-3 rounded-2xl">
-                    <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'En Terreno').length || 0}</div>
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">En Terreno</div>
+                  <h3 className="font-black text-primary text-lg uppercase tracking-tighter mb-1">Inventario & Equipos</h3>
+                  <p className="text-xs font-bold text-muted-foreground uppercase mb-6 leading-tight">Gestiona taladros, escaleras y equipos en terreno</p>
+                  <div className="flex gap-4 w-full">
+                    <div className="flex-1 bg-primary/5 p-3 rounded-2xl">
+                      <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'Disponible').length || 0}</div>
+                      <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">Disponibles</div>
+                    </div>
+                    <div className="flex-1 bg-accent/20 p-3 rounded-2xl">
+                      <div className="text-xl font-black text-primary">{tools?.filter((t: any) => t.estado === 'En Terreno').length || 0}</div>
+                      <div className="text-xs font-black text-muted-foreground uppercase tracking-widest">En Terreno</div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Módulos de Seguridad y Charlas */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <Card id="tour-card-safety" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+                <CardHeader className="bg-rose-500/[0.05] p-6 border-b border-rose-500/10">
+                  <CardTitle className="text-[11px] font-black uppercase text-rose-700 tracking-[0.2em] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck size={18} className="text-rose-600" />
+                      <span>Seguridad en Terreno & HPT</span>
+                    </div>
+                    <Link href="/hpt" className="text-[10px] font-bold text-rose-700 hover:underline flex items-center gap-1 lowercase">
+                      ver registros <ChevronRight size={12} />
+                    </Link>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center shrink-0">
+                      <ShieldCheck size={24} className="text-rose-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-black text-slate-800 text-sm tracking-tight mb-1">
+                        Hoja de Planificación del Trabajo (HPT)
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                        Evaluación previa obligatoria de riesgos críticos (altura física, electricidad, espacios confinados), verificación de EPP normado y toma de firmas de la cuadrilla con validación remota por Prevención.
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Link href="/hpt">
+                          <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold text-xs border-rose-200 text-rose-700 hover:bg-rose-50">
+                            <FileText size={14} className="mr-1.5" /> Ver HPTs
+                          </Button>
+                        </Link>
+                        <Link href="/hpt/new">
+                          <Button size="sm" className="h-9 px-4 rounded-xl font-bold text-xs bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
+                            <Plus size={14} className="mr-1.5" /> Nueva HPT
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card id="tour-card-charlas" className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/80 backdrop-blur-3xl rounded-3xl overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] transition-all duration-500">
+                <CardHeader className="bg-sky-500/[0.05] p-6 border-b border-sky-500/10">
+                  <CardTitle className="text-[11px] font-black uppercase text-sky-800 tracking-[0.2em] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <BookOpen size={18} className="text-sky-600" />
+                      <span>Charlas de Seguridad (5 Minutos)</span>
+                    </div>
+                    <Link href="/capacitaciones" className="text-[10px] font-bold text-sky-800 hover:underline flex items-center gap-1 lowercase">
+                      ver historial <ChevronRight size={12} />
+                    </Link>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center shrink-0">
+                      <BookOpen size={24} className="text-sky-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-black text-slate-800 text-sm tracking-tight mb-1">
+                        Inducción Diaria & Derecho a Saber (DAS)
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                        Registro de temas de seguridad e inducciones diarias previas al inicio de la jornada. Recolecta firmas táctiles en pantalla de cada técnico asistente y genera el acta oficial en PDF.
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Link href="/capacitaciones">
+                          <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold text-xs border-sky-200 text-sky-800 hover:bg-sky-50">
+                            <FileText size={14} className="mr-1.5" /> Ver Charlas
+                          </Button>
+                        </Link>
+                        <Link href="/capacitaciones/new">
+                          <Button size="sm" className="h-9 px-4 rounded-xl font-bold text-xs bg-sky-600 hover:bg-sky-700 text-white shadow-sm">
+                            <Plus size={14} className="mr-1.5" /> Registrar Charla
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 
