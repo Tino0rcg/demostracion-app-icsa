@@ -433,39 +433,39 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
             title="Haz clic en cualquier zona oscura para salir del tour y usar la app libremente"
           />
 
-          {/* Genuine Spotlight Cutout: The target area is 100% clear & illuminated, everything else is deeply darkened */}
+          {/* Stable, Non-Flickering Spotlight Cutout: The target area is 100% clear and sharp, the background is solid and calm */}
           {targetRect ? (
             <>
-              {/* The Spotlight Hole */}
+              {/* The Spotlight Hole with Stable 9999px Box Shadow (No animate-pulse to prevent background flickering) */}
               <div
                 style={{
                   top: Math.max(0, targetRect.top - 6),
                   left: Math.max(0, targetRect.left - 6),
                   width: targetRect.width + 12,
                   height: targetRect.height + 12,
-                  boxShadow: "0 0 0 9999px rgba(10, 25, 47, 0.82), 0 0 30px rgba(0, 0, 0, 0.6)",
+                  boxShadow: "0 0 0 9999px rgba(15, 23, 42, 0.78)",
                   borderRadius: "16px"
                 }}
-                className="fixed z-40 pointer-events-none ring-4 ring-accent ring-offset-2 ring-offset-background transition-all duration-300 animate-pulse"
+                className="fixed z-40 pointer-events-none ring-2 ring-accent transition-all duration-300 ease-out"
               />
 
-              {/* Animated beacon pointer directly pointing to the target button */}
+              {/* Clean, Non-Flickering Click Indicator Badge */}
               <div
                 style={{
-                  top: Math.max(8, targetRect.top - 20),
-                  left: Math.min(window.innerWidth - 90, targetRect.left + targetRect.width / 2 - 45)
+                  top: Math.max(8, targetRect.top - 24),
+                  left: Math.min(window.innerWidth - 100, targetRect.left + targetRect.width / 2 - 50)
                 }}
-                className="fixed z-50 pointer-events-none flex flex-col items-center animate-bounce transition-all duration-300"
+                className="fixed z-50 pointer-events-none flex flex-col items-center transition-all duration-300 ease-out"
               >
-                <div className="bg-accent text-primary font-black text-[10px] tracking-tight px-2.5 py-0.5 rounded-full shadow-2xl border border-primary/30 flex items-center gap-1 whitespace-nowrap">
-                  <MousePointerClick size={12} className="text-primary animate-pulse" />
-                  <span>¡Haz clic aquí!</span>
+                <div className="bg-accent text-primary font-black text-[10px] tracking-tight px-3 py-1 rounded-full shadow-xl border border-primary/25 flex items-center gap-1.5 whitespace-nowrap">
+                  <MousePointerClick size={12} className="text-primary" />
+                  <span>Haz clic aquí</span>
                 </div>
               </div>
             </>
           ) : (
-            /* Fallback dark overlay if waiting for an element */
-            <div className="fixed inset-0 z-40 bg-[rgba(10,25,47,0.82)] pointer-events-none transition-opacity duration-300" />
+            /* Stable dark overlay fallback */
+            <div className="fixed inset-0 z-40 bg-slate-900/75 pointer-events-none transition-opacity duration-300" />
           )}
 
           {/* Compact Anchored Popover Card with Pointer Arrow */}
