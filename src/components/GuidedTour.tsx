@@ -426,40 +426,46 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
       {/* Tour Active Overlay & Anchored Tooltip */}
       {isOpen && (
         <div className="fixed inset-0 z-50 pointer-events-none">
-          {/* Subtle semi-transparent backdrop */}
+          {/* Clickable Backdrop to close tour if clicking anywhere in the darkened region */}
           <div
             onClick={handleClose}
-            className="fixed inset-0 bg-slate-950/50 backdrop-blur-[1px] pointer-events-auto transition-opacity duration-300"
-            title="Haz clic para salir del tour y usar la app libremente"
+            className="fixed inset-0 z-30 pointer-events-auto cursor-pointer"
+            title="Haz clic en cualquier zona oscura para salir del tour y usar la app libremente"
           />
 
-          {/* Glowing spotlight ring around the target element */}
-          {targetRect && (
+          {/* Genuine Spotlight Cutout: The target area is 100% clear & illuminated, everything else is deeply darkened */}
+          {targetRect ? (
             <>
+              {/* The Spotlight Hole */}
               <div
                 style={{
                   top: Math.max(0, targetRect.top - 6),
                   left: Math.max(0, targetRect.left - 6),
                   width: targetRect.width + 12,
-                  height: targetRect.height + 12
+                  height: targetRect.height + 12,
+                  boxShadow: "0 0 0 9999px rgba(10, 25, 47, 0.82), 0 0 30px rgba(0, 0, 0, 0.6)",
+                  borderRadius: "16px"
                 }}
-                className="fixed z-40 pointer-events-none rounded-2xl ring-4 ring-accent ring-offset-2 ring-offset-background shadow-[0_0_40px_rgba(var(--accent),0.5)] transition-all duration-300 animate-pulse"
+                className="fixed z-40 pointer-events-none ring-4 ring-accent ring-offset-2 ring-offset-background transition-all duration-300 animate-pulse"
               />
 
               {/* Animated beacon pointer directly pointing to the target button */}
               <div
                 style={{
-                  top: Math.max(8, targetRect.top - 18),
+                  top: Math.max(8, targetRect.top - 20),
                   left: Math.min(window.innerWidth - 90, targetRect.left + targetRect.width / 2 - 45)
                 }}
                 className="fixed z-50 pointer-events-none flex flex-col items-center animate-bounce transition-all duration-300"
               >
-                <div className="bg-accent text-primary font-black text-[10px] tracking-tight px-2.5 py-0.5 rounded-full shadow-lg border border-primary/20 flex items-center gap-1 whitespace-nowrap">
+                <div className="bg-accent text-primary font-black text-[10px] tracking-tight px-2.5 py-0.5 rounded-full shadow-2xl border border-primary/30 flex items-center gap-1 whitespace-nowrap">
                   <MousePointerClick size={12} className="text-primary animate-pulse" />
                   <span>¡Haz clic aquí!</span>
                 </div>
               </div>
             </>
+          ) : (
+            /* Fallback dark overlay if waiting for an element */
+            <div className="fixed inset-0 z-40 bg-[rgba(10,25,47,0.82)] pointer-events-none transition-opacity duration-300" />
           )}
 
           {/* Compact Anchored Popover Card with Pointer Arrow */}
