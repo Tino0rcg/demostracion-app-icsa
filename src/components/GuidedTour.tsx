@@ -31,7 +31,7 @@ const STEPS: TourStep[] = [
     title: "1. Panel de Bienvenida y Roles",
     elementId: "tour-welcome",
     tab: "dashboard",
-    actionText: "👆 Observa tu perfil en la cabecera",
+    actionText: "Observa tu perfil en la cabecera",
     detail: "Estás conectado como Administrador General con permisos totales sobre faenas, clientes, técnicos y pañol."
   },
   // PASO 2
@@ -42,8 +42,8 @@ const STEPS: TourStep[] = [
     title: "2. Centro de Control & KPIs",
     elementId: "tour-stats-grid",
     tab: "dashboard",
-    actionText: "👆 Revisa el balance diario de faena",
-    detail: "Muestra cuántos proyectos están en ejecución, las órdenes que las cuadrillas tienen asignadas hoy y el instrumental en terreno."
+    actionText: "Revisa el balance general de faena",
+    detail: "Muestra cuántos proyectos están en ejecución, las órdenes de trabajo pendientes o en desarrollo y el instrumental en terreno."
   },
   // PASO 3
   {
@@ -53,19 +53,19 @@ const STEPS: TourStep[] = [
     title: "3. Obras Prioritarias",
     elementId: "tour-card-projects",
     tab: "dashboard",
-    actionText: "👉 Pulsa sobre esta tarjeta para ver proyectos",
+    actionText: "Pulsa sobre esta tarjeta para ver proyectos",
     detail: "Muestra los 5 contratos principales (Codelco, Entel) con fechas contractuales y porcentaje de avance."
   },
-  // PASO 4
+  // PASO 4: ÓRDENES PENDIENTES
   {
     id: "step-4",
     badge: "Cola de Terreno",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    title: "4. Órdenes de Trabajo de Hoy",
+    title: "4. Órdenes de Trabajo Pendientes",
     elementId: "tour-card-orders",
     tab: "dashboard",
-    actionText: "👉 Pulsa sobre esta tarjeta para ver OTs",
-    detail: "Supervisa en tiempo real qué órdenes están asignadas hoy con folio único, técnico a cargo y estado."
+    actionText: "Pulsa sobre esta tarjeta para ver OTs en curso",
+    detail: "Supervisa en tiempo real las órdenes de trabajo que aún no están terminadas o siguen pendientes en faena por alguna razón, con folio único y técnico a cargo."
   },
   // PASO 5
   {
@@ -75,7 +75,7 @@ const STEPS: TourStep[] = [
     title: "5. Pestaña de Proyectos Activos",
     elementId: "tour-projects-container",
     tab: "projects",
-    actionText: "👉 Revisa el listado de contratos",
+    actionText: "Revisa el listado de contratos",
     detail: "Aquí se registran las obras de ingeniería, asignando jefes de cuadrilla y acreditaciones para faena minera."
   },
   // PASO 6
@@ -86,7 +86,7 @@ const STEPS: TourStep[] = [
     title: "6. Buscador Predictivo de Faenas",
     elementId: "tour-projects-search",
     tab: "projects",
-    actionText: "👉 Escribe aquí para buscar obras",
+    actionText: "Escribe aquí para buscar obras",
     detail: "Filtra en milisegundos por nombre de proyecto (ej. 'Centinela'), cliente mandante o RUT comercial."
   },
   // PASO 7
@@ -97,7 +97,7 @@ const STEPS: TourStep[] = [
     title: "7. Botón '+ Nuevo Proyecto' & Acta Final",
     elementId: "tour-btn-new-project",
     tab: "projects",
-    actionText: "👉 Haz clic aquí para crear una obra",
+    actionText: "Haz clic aquí para crear una obra",
     detail: "Permite abrir faenas y genera el Acta Consolidada de Liquidación que agrupa todas las OTs para facturación inmediata."
   },
   // PASO 8
@@ -108,7 +108,7 @@ const STEPS: TourStep[] = [
     title: "8. Historial & Archivo de Proyectos",
     elementId: "tour-projects-history-container",
     tab: "project-history",
-    actionText: "👉 Consulta proyectos concluidos",
+    actionText: "Consulta proyectos concluidos",
     detail: "Filtra por rango de fechas (Desde / Hasta) para auditorías mineras, tributarias y balances anuales."
   },
   // PASO 9
@@ -119,7 +119,7 @@ const STEPS: TourStep[] = [
     title: "9. Pañol de Instrumental Crítico",
     elementId: "tour-tools-container",
     tab: "tools",
-    actionText: "👉 Controla equipos de alto costo",
+    actionText: "Controla equipos de alto costo",
     detail: "Monitorea fusionadoras Fujikura 90S+, reflectómetros OTDR Fluke Networks y stock disponible vs. en terreno."
   },
   // PASO 10
@@ -130,7 +130,7 @@ const STEPS: TourStep[] = [
     title: "10. Despacho con Firma Digital",
     elementId: "tour-tools-container",
     tab: "tools",
-    actionText: "👉 Pulsa 'Asignar / Retirar' en un equipo",
+    actionText: "Pulsa 'Asignar / Retirar' en un equipo",
     detail: "El técnico estampa su firma biométrica en la tablet/celular acreditando la recepción conforme con número de serie inmutable."
   },
   // PASO 11
@@ -141,7 +141,7 @@ const STEPS: TourStep[] = [
     title: "11. Devolución por Lote en 1 Clic",
     elementId: "tour-tools-container",
     tab: "tools",
-    actionText: "👉 Cada técnico ve 'Mis Herramientas'",
+    actionText: "Cada técnico ve 'Mis Herramientas'",
     detail: "Al terminar el turno, el técnico selecciona todas sus herramientas y las devuelve en 1 solo paso con inspección física."
   },
   // PASO 12
@@ -152,7 +152,7 @@ const STEPS: TourStep[] = [
     title: "12. HPT Pre-Faena & Charlas de 5 Minutos",
     elementId: "tour-welcome",
     tab: "dashboard",
-    actionText: "👉 Obligatorio antes de iniciar faena",
+    actionText: "Obligatorio antes de iniciar faena",
     detail: "Checklist de riesgos críticos (altura física, electricidad), verificación de EPP normado y toma de firmas de la cuadrilla."
   },
   // PASO 13: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
@@ -163,7 +163,7 @@ const STEPS: TourStep[] = [
     title: "13. ¡Aquí emites una Orden de Trabajo!",
     elementId: "tour-btn-new-ot",
     tab: "dashboard",
-    actionText: "👉 Haz clic en '+ Crear OT'",
+    actionText: "Haz clic en '+ Crear OT'",
     detail: "Este botón abre el formulario oficial de terreno optimizado para tablet o celular.",
     isOtShowcase: true
   },
@@ -175,8 +175,8 @@ const STEPS: TourStep[] = [
     title: "14. Monitoreo de Órdenes Activas",
     elementId: "tour-orders-container",
     tab: "orders",
-    actionText: "👉 Supervisa el estado de las cuadrillas",
-    detail: "Revisa OTs en borrador, en desarrollo o listas para firma, con mediciones ópticas guardadas por puerto."
+    actionText: "Supervisa el estado de las cuadrillas",
+    detail: "Revisa OTs en borrador, en desarrollo o esperando validación, con mediciones ópticas guardadas por puerto."
   },
   // PASO 15
   {
@@ -186,7 +186,7 @@ const STEPS: TourStep[] = [
     title: "15. Doble Firma Digital Híbrida",
     elementId: "tour-orders-container",
     tab: "orders",
-    actionText: "👉 Valida el trabajo ejecutado",
+    actionText: "Valida el trabajo ejecutado",
     detail: "Firma 1 (Técnico en pantalla) + Firma 2 (Cliente presencial en tablet O remota por WhatsApp/email con token seguro)."
   },
   // PASO 16
@@ -197,7 +197,7 @@ const STEPS: TourStep[] = [
     title: "16. Informe Formal en PDF & Fin del Tour",
     elementId: "tour-history-container",
     tab: "order-history",
-    actionText: "👉 Pulsa 'Descargar PDF' para facturación",
+    actionText: "Pulsa 'Descargar PDF' para facturación",
     detail: "Genera el acta oficial membretada con firmas y fotos. El tour ha finalizado: ¡ya puedes usar la app con total normalidad!"
   }
 ];
