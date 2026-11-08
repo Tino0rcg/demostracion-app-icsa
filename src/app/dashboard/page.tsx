@@ -309,7 +309,7 @@ function DashboardContent() {
         ].map((item) => (
           <Button
             key={item.id}
-            id={item.id === 'hpt' ? 'tour-menu-hpt' : undefined}
+            id={`tour-menu-${item.id}`}
             variant="ghost"
             className={cn(
               "w-full justify-start gap-3 h-12 rounded-xl font-bold text-sm transition-all text-left",
@@ -329,12 +329,12 @@ function DashboardContent() {
 
         {isAdmin && (
           <div className="pt-4 mt-4 border-t border-white/10 space-y-1">
-            <Link href="/clients" className="block">
+            <Link href="/clients" id="tour-menu-clients" className="block">
               <Button variant="ghost" className="w-full justify-start gap-3 h-12 text-white/70 hover:bg-white/10 hover:text-white rounded-xl font-bold">
                 <Users size={20} /> Gestión Clientes
               </Button>
             </Link>
-            <Link href="/technicians" className="block">
+            <Link href="/technicians" id="tour-menu-technicians" className="block">
               <Button variant="ghost" className="w-full justify-start gap-3 h-12 text-white/70 hover:bg-white/10 hover:text-white rounded-xl font-bold">
                 <UserRound size={20} /> Control Personal
               </Button>
@@ -532,7 +532,7 @@ function DashboardContent() {
           <Card id={activeTab === "projects" ? "tour-projects-container" : "tour-projects-history-container"} className="shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-none bg-white/90 backdrop-blur-2xl rounded-3xl overflow-hidden animate-slide-up">
             <CardHeader className="border-b border-black/5 bg-transparent p-6">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
-                <div className="relative flex-1 max-w-md">
+                <div id="tour-projects-search" className="relative flex-1 max-w-md">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input placeholder="Buscar proyecto o cliente..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-12 h-12 bg-muted/30 border-none rounded-2xl font-bold transition-all focus:ring-2 focus:ring-primary/20 shadow-inner" />
                 </div>
@@ -808,7 +808,7 @@ function DashboardContent() {
         )}
 
         {activeTab === "tool-history" && (
-          <div className="space-y-6 animate-in fade-in duration-500">
+          <div id="tour-tool-history-container" className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-6 rounded-3xl border border-white shadow-xl shadow-primary/5">
               <div>
                 <h2 className="text-2xl font-black text-primary tracking-tighter uppercase italic">Actas de Movimiento</h2>
