@@ -1608,7 +1608,7 @@ function DashboardContent() {
         </Dialog>
       </main>
 
-      <GuidedTour onTabChange={setTab} />
+      <GuidedTour onTabChange={setTab} activeTab={activeTab} />
     </div>
   );
 }

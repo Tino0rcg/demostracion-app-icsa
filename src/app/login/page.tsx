@@ -12,8 +12,6 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowLeft, LogIn, Eye, EyeOff, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { loginAction, checkSysHealth, autoDemoLogin } from "@/actions/auth-actions";
-import { driver, Driver } from "driver.js";
-import "driver.js/dist/driver.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -23,50 +21,9 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [health, setHealth] = useState<any>(null);
-  const driverRef = useRef<Driver | null>(null);
 
   const startLoginTour = () => {
-    if (typeof window === "undefined") return;
-
-    const driverObj = driver({
-      showProgress: false,
-      animate: true,
-      allowClose: true,
-      overlayColor: "rgba(10, 25, 47, 0.85)",
-      nextBtnText: "🚀 Saltar Login e Ir al Dashboard →",
-      doneBtnText: "🚀 Saltar Login e Ir al Dashboard →",
-      showButtons: ["next", "close"],
-      steps: [
-        {
-          element: "#tour-login-card",
-          popover: {
-            title: "🔐 Paso 1: Autenticación & Control de Roles",
-            description: `
-              <div style="font-size: 13px; line-height: 1.5; color: #334155; display: flex; flex-direction: column; gap: 8px;">
-                <p>El sistema cuenta con segregación estricta de funciones para <strong>Administradores</strong>, <strong>Supervisores de Faena</strong> y <strong>Prevención de Riesgos</strong>.</p>
-                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 8px 10px; color: #115e59; font-weight: 500;">
-                  💡 <strong>Demostración Activa:</strong> Para que conozcas toda la plataforma sin fricción, <strong>nos saltamos el ingreso manual de credenciales</strong> y accederemos automáticamente como <strong>Administrador General</strong> para mostrarte todas las vistas operativas.
-                </div>
-              </div>
-            `,
-            side: "top",
-            align: "center",
-            nextBtnText: "🚀 Saltar Login e Ir al Dashboard →",
-          }
-        }
-      ],
-      onNextClick: () => {
-        driverObj.destroy();
-        handleQuickDemo("admin");
-      },
-      onDoneClick: () => {
-        driverObj.destroy();
-        handleQuickDemo("admin");
-      }
-    });
-
-    driverRef.current = driverObj;
-    driverObj.drive();
+    handleQuickDemo("admin");
   };
 
   useEffect(() => {
