@@ -8,13 +8,13 @@ import {
     LogOut, ChevronRight, X, Wrench, Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/lib/auth-provider";
 import { logoutAction } from "@/actions/auth-actions";
 
-export function MobileNav() {
+function MobileNavContent() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -202,3 +202,12 @@ export function MobileNav() {
         </nav>
     );
 }
+
+export function MobileNav() {
+    return (
+        <Suspense fallback={null}>
+            <MobileNavContent />
+        </Suspense>
+    );
+}
+

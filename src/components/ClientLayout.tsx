@@ -4,14 +4,17 @@ import { useUser } from "@/lib/auth-provider";
 import { MobileNav } from "@/components/MobileNav";
 import { usePathname } from "next/navigation";
 import { PullToRefresh } from "./PullToRefresh";
+import { Suspense } from "react";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const { user } = useUser();
     const pathname = usePathname() || "";
 
-    // Hide nav on landing page, login, firmar routes, and edit/new form routes
+    // Hide nav on landing page, login, firmar routes, 404, and edit/new form routes
     const isHiddenRoute = pathname === "/" || 
         pathname === "/login" ||
+        pathname === "/404" ||
+        pathname === "/_not-found" ||
         pathname.startsWith("/firmar") ||
         pathname.includes("/edit") ||
         pathname.includes("/new");
@@ -36,7 +39,11 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
                     children
                 )}
             </main>
-            {showNav && <MobileNav />}
+            {showNav && (
+                <Suspense fallback={null}>
+                    <MobileNav />
+                </Suspense>
+            )}
         </>
     );
 }
