@@ -21,7 +21,7 @@ La plataforma está construida con tecnologías de última generación para gara
 2. [Navegación y Panel Principal (Dashboard)](#2-navegación-y-panel-principal)
 3. [Órdenes de Trabajo (OTs)](#3-órdenes-de-trabajo-ots)
 4. [Gestión de Proyectos](#4-gestión-de-proyectos)
-5. [Seguridad en Faena (HPT y Charlas)](#5-seguridad-en-faena-hpt-y-charlas)
+5. [Seguridad en Terreno (HPT y Charlas)](#5-seguridad-en-terreno-hpt-y-charlas)
 6. [Control de Herramientas e Inventario](#6-control-de-herramientas-e-inventario)
 7. [Administración (Solo Administradores)](#7-administración-solo-administradores)
 8. [Mejores Prácticas y Consejos](#8-mejores-prácticas-y-consejos)
@@ -97,7 +97,7 @@ Los Proyectos agrupan a múltiples trabajadores y a muchas Órdenes de Trabajo (
 
 ---
 
-## 5. Seguridad en Faena (HPT y Charlas)
+## 5. Seguridad en Terreno (HPT y Charlas)
 
 El portal permite digitalizar los registros de seguridad obligatorios, asegurando que se cumplan las normativas antes de iniciar cualquier labor técnica.
 

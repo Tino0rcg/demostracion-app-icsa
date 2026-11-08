@@ -32,7 +32,7 @@ const STEPS: TourStep[] = [
     elementId: "tour-welcome",
     tab: "dashboard",
     actionText: "Observa tu perfil en la cabecera",
-    detail: "Estás conectado como Administrador General con permisos totales sobre faenas, clientes, técnicos y pañol."
+    detail: "Estás conectado como Administrador General con permisos totales sobre obras, clientes, técnicos y pañol."
   },
   // PASO 2
   {
@@ -42,13 +42,13 @@ const STEPS: TourStep[] = [
     title: "2. Centro de Control & KPIs",
     elementId: "tour-stats-grid",
     tab: "dashboard",
-    actionText: "Revisa el balance general de faena",
+    actionText: "Revisa el balance general de operaciones",
     detail: "Muestra cuántos proyectos están en ejecución, las órdenes de trabajo pendientes o en desarrollo y el instrumental en terreno."
   },
   // PASO 3
   {
     id: "step-3",
-    badge: "Contratos de Faena",
+    badge: "Contratos de Obras",
     badgeColor: "bg-amber-100 text-amber-800 border-amber-200",
     title: "3. Obras Prioritarias",
     elementId: "tour-card-projects",
@@ -65,7 +65,7 @@ const STEPS: TourStep[] = [
     elementId: "tour-card-orders",
     tab: "dashboard",
     actionText: "Pulsa sobre esta tarjeta para ver OTs en curso",
-    detail: "Supervisa en tiempo real las órdenes de trabajo que aún no están terminadas o siguen pendientes en faena por alguna razón, con folio único y técnico a cargo."
+    detail: "Supervisa en tiempo real las órdenes de trabajo que aún no están terminadas o siguen pendientes en terreno por alguna razón, con folio único y técnico a cargo."
   },
   // PASO 5
   {
@@ -76,14 +76,14 @@ const STEPS: TourStep[] = [
     elementId: "tour-projects-container",
     tab: "projects",
     actionText: "Revisa el listado de contratos",
-    detail: "Aquí se registran las obras de ingeniería, asignando jefes de cuadrilla y acreditaciones para faena minera."
+    detail: "Aquí se registran las obras de ingeniería, asignando jefes de cuadrilla y acreditaciones para trabajos en terreno."
   },
   // PASO 6
   {
     id: "step-6",
     badge: "Filtro Rápido",
     badgeColor: "bg-sky-100 text-sky-800 border-sky-200",
-    title: "6. Buscador Predictivo de Faenas",
+    title: "6. Buscador Predictivo de Proyectos",
     elementId: "tour-projects-search",
     tab: "projects",
     actionText: "Escribe aquí para buscar obras",
@@ -98,7 +98,7 @@ const STEPS: TourStep[] = [
     elementId: "tour-btn-new-project",
     tab: "projects",
     actionText: "Haz clic aquí para crear una obra",
-    detail: "Permite abrir faenas y genera el Acta Consolidada de Liquidación que agrupa todas las OTs para facturación inmediata."
+    detail: "Permite abrir nuevos proyectos y genera el Acta Consolidada de Liquidación que agrupa todas las OTs para facturación inmediata."
   },
   // PASO 8
   {
@@ -149,10 +149,10 @@ const STEPS: TourStep[] = [
     id: "step-12",
     badge: "Fase 3 • Seguridad ACHS / Mutual",
     badgeColor: "bg-rose-100 text-rose-800 border-rose-200",
-    title: "12. HPT Pre-Faena & Charlas de 5 Minutos",
+    title: "12. HPT Previa al Trabajo & Charlas de 5 Minutos",
     elementId: "tour-welcome",
     tab: "dashboard",
-    actionText: "Obligatorio antes de iniciar faena",
+    actionText: "Obligatorio antes de iniciar el trabajo",
     detail: "Checklist de riesgos críticos (altura física, electricidad), verificación de EPP normado y toma de firmas de la cuadrilla."
   },
   // PASO 13: EL PROCESO DE LA OT POR DENTRO (BOTÓN CREAR OT)
@@ -555,7 +555,7 @@ export function GuidedTour({ onTabChange }: GuidedTourProps) {
 
                   <div className="grid grid-cols-2 gap-1.5 text-left text-[11px]">
                     <div className="bg-white p-2 rounded-lg border border-slate-200">
-                      <span className="font-black text-primary">1. Mandante & Faena</span>
+                      <span className="font-black text-primary">1. Mandante & Ubicación</span>
                       <p className="text-[10px] text-slate-500">Codelco / Centinela y folio.</p>
                     </div>
                     <div className="bg-white p-2 rounded-lg border border-slate-200">

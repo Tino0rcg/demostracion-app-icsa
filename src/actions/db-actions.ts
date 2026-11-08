@@ -256,7 +256,7 @@ const DEMO_TOOLS = [
         categoria: "Seguridad en Altura",
         estado: "En Terreno",
         asignadoA: "Carlos Muñoz",
-        descripcion: "Escalera de fibra de vidrio no conductora de electricidad, capacidad de carga 136 kg para faenas en postes.",
+        descripcion: "Escalera de fibra de vidrio no conductora de electricidad, capacidad de carga 136 kg para trabajos en postes y canalizaciones.",
         imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80"
     },
     {

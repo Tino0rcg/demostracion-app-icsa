@@ -121,8 +121,8 @@ function NewWorkOrderContent() {
       clientRut: "76.432.198-5",
       clientPhone: "+56 9 8452 1190",
       clientEmail: "operaciones.centinela@icsa.cl",
-      branch: "Faena Centinela",
-      address: "Camino a Faena Km 42, Sierra Gorda, Región de Antofagasta",
+      branch: "Sucursal Centinela",
+      address: "Camino a Planta Km 42, Sierra Gorda, Región de Antofagasta",
       interventionAddress: "Edificio Concentradora - Sala de Control de Racks, Piso 2",
       building: "Edificio Concentradora",
       floor: "Piso 2 - Sala Racks R-04",
@@ -139,7 +139,7 @@ function NewWorkOrderContent() {
         { punto: "P-01 al P-12", patchPanel: "PP-ODF-01", rack: "Rack 04", switch: "SW-CORP-01", puerto: "Puertos 1-12", certificacion: "Aprobado (0.02 dB)" },
         { punto: "P-13 al P-24", patchPanel: "PP-ODF-01", rack: "Rack 04", switch: "SW-CORP-01", puerto: "Puertos 13-24", certificacion: "Aprobado (0.03 dB)" }
       ],
-      observacionesGenerales: "Faena ejecutada según protocolo de seguridad HPT y charla de 5 minutos. Enlaces de fibra monomodo fusionados con máquina Fujikura 90S+. Atenuación media obtenida 0.02 dB por fusión, sin pérdidas anómalas.",
+      observacionesGenerales: "Trabajo ejecutado según protocolo de seguridad HPT y charla de 5 minutos. Enlaces de fibra monomodo fusionados con máquina Fujikura 90S+. Atenuación media obtenida 0.02 dB por fusión, sin pérdidas anómalas.",
       estadoTrabajo: "Trabajo finalizado correctamente",
       description: "Empalme de cable troncal de 48 hilos monomodo en sala de control y habilitación de 24 enlaces de datos para PLC y cámaras de seguridad.",
       techName: "Carlos Mendoza Silva",
@@ -147,11 +147,11 @@ function NewWorkOrderContent() {
       clientReceiverName: "Eduardo Valenzuela Gómez",
       clientReceiverRut: "12.876.543-K",
       clientReceiverEmail: "evalenzuela@codelco.cl",
-      condicionesCobro: ["Cobro Normal", "Horas Extra Faena Aprobadas", "Certificación Digital Incluida"]
+      condicionesCobro: ["Cobro Normal", "Horas Extra de Trabajo Aprobadas", "Certificación Digital Incluida"]
     }));
     toast({
       title: "⚡ Datos de Terreno Cargados",
-      description: "Se autocompletaron todos los campos técnicos, cuadrilla y especificaciones de faena minera."
+      description: "Se autocompletaron todos los campos técnicos, cuadrilla y especificaciones del trabajo en terreno."
     });
   };
 
